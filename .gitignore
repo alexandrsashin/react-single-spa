@@ -59,6 +59,3 @@ temp/
 
 # Microfrontend specific
 # Add any specific build artifacts from your microfrontends here
-
-# Husky
-.husky/_/
