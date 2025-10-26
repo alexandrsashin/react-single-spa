@@ -9,7 +9,11 @@ const lifecycles = singleSpaReact({
   rootComponent: Root,
   errorBoundary(err, info, props) {
     // Customize the root error boundary for your microfrontend here.
-    return null;
+    return React.createElement(
+      "div",
+      { style: { color: "red" } },
+      "Error loading auth microfrontend"
+    );
   },
 });
 

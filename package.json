@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "start": "vite --mode development",
-    "dev:all": "concurrently --names \"auth,root\" \"yarn --cwd packages/auth start\" \"yarn start\"",
+    "dev:all": "concurrently --names \"auth,root\" \"yarn --cwd packages/auth preview\" \"yarn start\"",
     "dev": "vite --mode development",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
