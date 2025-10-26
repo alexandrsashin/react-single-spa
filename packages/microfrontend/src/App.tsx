@@ -1,12 +1,12 @@
 import React from "react";
 import {
   useAuth,
-  LoginForm,
   LogoutButton,
   UserInfo,
   ProtectedRoute,
 } from "../../shared/auth-hooks";
 import { httpClient } from "../../shared/http-client-fixed";
+import { LoginForm } from "./components/LoginForm";
 
 function App() {
   const { isAuthenticated } = useAuth();
@@ -46,11 +46,8 @@ function App() {
         <p>Please log in to access this microfrontend.</p>
         <LoginForm
           onSuccess={() => console.log("Login successful!")}
-          onError={(error) => console.error("Login error:", error)}
+          onError={(error: string) => console.error("Login error:", error)}
         />
-        <p style={{ marginTop: "10px", fontSize: "12px", color: "#666" }}>
-          Test credentials: test@example.com / password
-        </p>
       </div>
     );
   }

@@ -128,63 +128,6 @@ export function UserInfo(): JSX.Element {
   );
 }
 
-// Компонент для входа в систему
-interface LoginFormProps {
-  onSuccess?: () => void;
-  onError?: (error: string) => void;
-}
-
-export function LoginForm({ onSuccess, onError }: LoginFormProps): JSX.Element {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await login({ email, password });
-      onSuccess?.();
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Login failed";
-      onError?.(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit" disabled={loading}>
-        {loading ? "Logging in..." : "Login"}
-      </button>
-    </form>
-  );
-}
-
 // Компонент кнопки выхода
 interface LogoutButtonProps {
   children?: React.ReactNode;
