@@ -8,7 +8,10 @@
   "description": "Local development helper for this single-spa root-config + microfrontends monorepo.",
   "scripts": {
     "build": "yarn workspaces foreach --all run build",
-    "dev": "yarn workspaces foreach --all --parallel run dev"
+    "build:production": "yarn generate-importmap && yarn workspaces foreach --all run build:nocheck",
+    "dev": "yarn workspaces foreach --all --parallel run dev",
+    "generate-importmap": "node scripts/generate-importmap.js",
+    "start:production": "yarn generate-importmap && yarn workspace root-config preview"
   },
   "repository": {
     "type": "git",

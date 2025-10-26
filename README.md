@@ -36,7 +36,7 @@ yarn install
 yarn dev
 ```
 
-This will start all microfrontends in development mode in parallel.
+This will start all microfrontends in development mode in parallel with dynamic importmap loading.
 
 ## 🔧 Individual Development
 
@@ -65,19 +65,25 @@ yarn workspace @react-single-spa/microfrontend2 dev
 ## 📋 Available Commands
 
 ```bash
-# Build all packages
-yarn build
+# Development
+yarn dev                    # Develop all packages in parallel (auto-detects localhost)
 
-# Develop all packages in parallel
-yarn dev
+# Production
+yarn generate-importmap     # Generate importmap configuration for production
+yarn build:production       # Build all packages with production importmap
+yarn start:production       # Start production preview
 
-# Format code
+# Build commands
+yarn build                  # Build all packages (without importmap generation)
+
+# Individual workspace commands
+yarn workspace root-config dev
+yarn workspace microfrontend dev
+yarn workspace microfrontend2 dev
+
+# Code quality
 yarn workspace root-config format
-
-# Check formatting
 yarn workspace root-config check-format
-
-# Linting
 yarn workspace root-config lint
 ```
 
@@ -106,9 +112,21 @@ localStorage.setItem("devtools", true);
 The project uses:
 
 - **Single-SPA** for microfrontend orchestration
+- **Dynamic ImportMap** for environment-specific module loading
 - **Vite** for bundling and dev server
 - **Yarn Workspaces** for dependency management
 - **TypeScript** for type safety
+- **Ant Design** for UI components (in microfrontend 1)
+- **Centralized Auth System** for token management across microfrontends
+
+## 🔧 ImportMap Configuration
+
+The project uses dynamic importmap loading that automatically detects the environment:
+
+- **Development**: Uses localhost URLs and JSPM CDN for fast development
+- **Production**: Uses built bundles and optimized CDN resources
+
+See [IMPORTMAP_GUIDE.md](./IMPORTMAP_GUIDE.md) for detailed configuration instructions.
 
 ## 📚 Useful Links
 

@@ -2,10 +2,13 @@
   "name": "root-config",
   "scripts": {
     "dev": "vite --port 3005",
+    "build": "vite build",
+    "build:nocheck": "vite build",
     "lint": "eslint src --ext js,ts,tsx",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "build:types": "tsc"
+    "build:types": "tsc",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -18,6 +21,7 @@
     "vite-plugin-externalize-dependencies": "^0.10.0"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "single-spa": "^5.9.3",
     "single-spa-layout": "^1.6.0",
     "vite": "^4.4.2"
