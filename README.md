@@ -1,49 +1,108 @@
-# react-single-spa (root-config)
+# React Single-SPA Monorepo
 
-Local development helper for this single-spa root-config + microfrontends monorepo.
+Monorepo for Single-SPA application with React-based microfrontends.
 
-## Start both dev servers (recommended)
+## 🏗️ Project Structure
 
-From the repo root:
-
-```bash
-# starts the auth Vite server on port 8080 and the root Vite server on port 9000
-yarn dev:all
+```
+├── packages/
+│   ├── root-config/          # Root configuration (Single-SPA)
+│   ├── microfrontend/        # First microfrontend
+│   └── microfrontend2/       # Second microfrontend
+├── index.html               # Main HTML page
+└── package.json            # Workspace configuration
 ```
 
-## Start servers individually
+## 🚀 Quick Start
 
-Start the root (Vite):
-
-```bash
-yarn start   # runs Vite (PORT=9000 by dev:all)
-```
-
-Start only the auth microfrontend (Vite):
+### Install dependencies
 
 ```bash
-yarn --cwd packages/auth start   # runs Vite for @auth/auth (PORT=8080 by dev:all)
+yarn install
 ```
 
-You can also run the workspace script directly once the repo is configured as a Yarn workspace:
+### Run all microfrontends in parallel
 
 ```bash
-# start auth via workspace command
-yarn workspace @auth/auth start
+yarn dev
 ```
 
-## Verify in browser
+This will start all microfrontends in development mode in parallel.
 
-- Open the root-config app (Vite): http://localhost:9000/
-- The auth microfrontend should be loaded from http://localhost:8080/auth-auth.js (the import map entry in `index.html` points here)
+## 🔧 Individual Development
 
-If you want to enable the single-spa devtools widget (handy for development):
+### Run root-config separately
 
-1. In the browser console run:
+```bash
+yarn workspace root-config dev
+```
+
+### Run individual microfrontend
+
+```bash
+# First microfrontend
+yarn workspace @react-single-spa/microfrontend dev
+
+# Second microfrontend
+yarn workspace @react-single-spa/microfrontend2 dev
+```
+
+## 🌐 Ports and URLs
+
+- **Root Config**: http://localhost:3005/
+- **Microfrontend 1**: port defined in package
+- **Microfrontend 2**: port defined in package
+
+## 📋 Available Commands
+
+```bash
+# Build all packages
+yarn build
+
+# Develop all packages in parallel
+yarn dev
+
+# Format code
+yarn workspace root-config format
+
+# Check formatting
+yarn workspace root-config check-format
+
+# Linting
+yarn workspace root-config lint
+```
+
+## 🛠️ Development
+
+### Single-SPA Layout
+
+Routing configuration is located in `packages/root-config/src/microfrontend-layout.ts`.
+
+### Debugging
+
+To enable Single-SPA devtools:
+
+1. Open browser console
+2. Execute:
 
 ```js
 localStorage.setItem("devtools", true);
 ```
 
-2. Refresh the page.
-3. A yellow widget appears in the bottom-right. Click it to inspect loaded modules, or add a new module by pasting the microfrontend entry URL (if needed).
+3. Reload the page
+4. Use the yellow widget in the bottom right corner
+
+## 🏗️ Architecture
+
+The project uses:
+
+- **Single-SPA** for microfrontend orchestration
+- **Vite** for bundling and dev server
+- **Yarn Workspaces** for dependency management
+- **TypeScript** for type safety
+
+## 📚 Useful Links
+
+- [Single-SPA Documentation](https://single-spa.js.org/)
+- [Vite Documentation](https://vitejs.dev/)
+- [Yarn Workspaces](https://yarnpkg.com/features/workspaces)
