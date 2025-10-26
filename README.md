@@ -15,6 +15,15 @@ Monorepo for Single-SPA application with React-based microfrontends.
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- **Node.js 24+** (recommended)
+- Enable Corepack for Yarn stable:
+
+```bash
+corepack enable
+```
+
 ### Install dependencies
 
 ```bash
