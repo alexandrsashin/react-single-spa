@@ -11,8 +11,6 @@ From the repo root:
 yarn dev:all
 ```
 
-This uses `concurrently` and sets environment variables so both servers run on deterministic ports.
-
 ## Start servers individually
 
 Start the root (Vite):

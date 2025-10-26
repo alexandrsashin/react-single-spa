@@ -1,9 +1,9 @@
 {
-  "name": "@auth/auth",
+  "name": "@react-single-spa/auth",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite",
+    "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

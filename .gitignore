@@ -57,5 +57,11 @@ temp/
 # TypeScript cache
 *.tsbuildinfo
 
-# Microfrontend specific
-# Add any specific build artifacts from your microfrontends here
+# Yarn stable
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

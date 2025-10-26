@@ -1,31 +1,25 @@
 {
-  "name": "@react-single-spa/root-config",
-  "private": true,
+  "name": "react-single-spa",
+  "version": "1.0.0",
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
+  "description": "Local development helper for this single-spa root-config + microfrontends monorepo.",
   "scripts": {
-    "start": "vite --mode development",
-    "dev:all": "concurrently --names \"auth,root\" \"yarn --cwd packages/auth preview\" \"yarn start\"",
-    "dev": "vite --mode development",
-    "format": "prettier --write .",
-    "check-format": "prettier --check .",
-    "build": "tsc && vite build --mode production"
+    "build": "yarn workspaces foreach --all run build",
+    "dev": "yarn workspaces foreach --all --parallel run dev"
   },
-  "devDependencies": {
-    "@types/node": "^24.5.2",
-    "@vitejs/plugin-legacy": "^7.2.1",
-    "concurrently": "^7.6.0",
-    "cross-env": "^10.0.0",
-    "prettier": "^2.3.2",
-    "pretty-quick": "^3.1.1",
-    "ts-config-single-spa": "^3.0.0",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.7"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexandrsashin/react-single-spa.git"
   },
-  "dependencies": {
-    "single-spa": "^6.0.3",
-    "single-spa-layout": "^3.0.0"
+  "keywords": [],
+  "author": "Alexandr Sashin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alexandrsashin/react-single-spa/issues"
   },
-  "types": "dist/react-single-spa-root-config.d.ts"
+  "homepage": "https://github.com/alexandrsashin/react-single-spa#readme",
+  "packageManager": "yarn@4.10.3"
 }
