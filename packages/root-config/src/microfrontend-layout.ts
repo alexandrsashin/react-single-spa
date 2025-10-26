@@ -19,7 +19,8 @@ export const microfrontendLayout = `<single-spa-router>
 
   <main>
     <route default>
-      <application name="@auth/auth"></application>
+      <application name="@react-single-spa/microfrontend"></application>
+      <application name="@react-single-spa/microfrontend2"></application>
     </route>
   </main>
 </single-spa-router>`;
