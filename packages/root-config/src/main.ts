@@ -5,6 +5,7 @@ import {
   constructLayoutEngine,
 } from "single-spa-layout";
 import { microfrontendLayout } from "./microfrontend-layout";
+import "./auth/AuthService"; // Инициализируем AuthService
 
 const routes = constructRoutes(microfrontendLayout);
 const applications = constructApplications({

@@ -1,0 +1,206 @@
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  AuthState,
+  User,
+  getAuthService,
+  hasRole,
+  hasPermission,
+} from "./auth-utils";
+
+// Hook для работы с авторизацией
+export function useAuth() {
+  const [authState, setAuthState] = useState<AuthState>(() => {
+    const authService = getAuthService();
+    return (
+      authService?.getState() || {
+        isAuthenticated: false,
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+        tokenExpiry: null,
+      }
+    );
+  });
+
+  useEffect(() => {
+    const authService = getAuthService();
+    if (!authService) return;
+
+    // Инициализируем состояние
+    setAuthState(authService.getState());
+
+    // Подписываемся на изменения
+    const unsubscribe = authService.subscribe((newState) => {
+      setAuthState(newState);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const login = useCallback(
+    async (credentials: { email: string; password: string }) => {
+      const authService = getAuthService();
+      if (authService) {
+        await authService.login(credentials);
+      }
+    },
+    []
+  );
+
+  const logout = useCallback(() => {
+    const authService = getAuthService();
+    if (authService) {
+      authService.logout();
+    }
+  }, []);
+
+  const getValidToken = useCallback(async () => {
+    const authService = getAuthService();
+    if (authService) {
+      return await authService.getValidAccessToken();
+    }
+    return null;
+  }, []);
+
+  return {
+    ...authState,
+    login,
+    logout,
+    getValidToken,
+  };
+}
+
+// Hook для проверки ролей
+export function useRole(role: string): boolean {
+  const { user } = useAuth();
+  return hasRole(user, role);
+}
+
+// Hook для проверки прав доступа
+export function usePermissions(permissions: string[]): boolean {
+  const { user } = useAuth();
+  return hasPermission(user, permissions);
+}
+
+// React компонент для защищенных маршрутов
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requireAuth?: boolean;
+  requiredRoles?: string[];
+  fallback?: React.ReactNode;
+}
+
+export function ProtectedRoute({
+  children,
+  requireAuth = true,
+  requiredRoles = [],
+  fallback = <div>Access denied</div>,
+}: ProtectedRouteProps): JSX.Element {
+  const { isAuthenticated, user } = useAuth();
+
+  if (requireAuth && !isAuthenticated) {
+    return <div>Please log in to access this page</div>;
+  }
+
+  if (requiredRoles.length > 0 && !hasPermission(user, requiredRoles)) {
+    return <>{fallback}</>;
+  }
+
+  return <>{children}</>;
+}
+
+// Компонент для отображения информации о пользователе
+export function UserInfo(): JSX.Element {
+  const { user, isAuthenticated } = useAuth();
+
+  if (!isAuthenticated || !user) {
+    return <div>Not authenticated</div>;
+  }
+
+  return (
+    <div>
+      <p>Welcome, {user.name}!</p>
+      <p>Email: {user.email}</p>
+      {user.roles && user.roles.length > 0 && (
+        <p>Roles: {user.roles.join(", ")}</p>
+      )}
+    </div>
+  );
+}
+
+// Компонент для входа в систему
+interface LoginFormProps {
+  onSuccess?: () => void;
+  onError?: (error: string) => void;
+}
+
+export function LoginForm({ onSuccess, onError }: LoginFormProps): JSX.Element {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await login({ email, password });
+      onSuccess?.();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Login failed";
+      onError?.(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label htmlFor="password">Password:</label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <button type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </button>
+    </form>
+  );
+}
+
+// Компонент кнопки выхода
+interface LogoutButtonProps {
+  children?: React.ReactNode;
+  onLogout?: () => void;
+}
+
+export function LogoutButton({
+  children = "Logout",
+  onLogout,
+}: LogoutButtonProps): JSX.Element {
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    onLogout?.();
+  };
+
+  return <button onClick={handleLogout}>{children}</button>;
+}
