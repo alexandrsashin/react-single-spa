@@ -6,6 +6,8 @@ import {
 } from "single-spa-layout";
 import { microfrontendLayout } from "./microfrontend-layout";
 import "./auth/AuthService"; // Инициализируем AuthService
+import "./auth/RedirectService"; // Инициализируем RedirectService для обработки редиректов
+import "./navigation-utils"; // Инициализируем утилиты навигации
 
 const routes = constructRoutes(microfrontendLayout);
 const applications = constructApplications({

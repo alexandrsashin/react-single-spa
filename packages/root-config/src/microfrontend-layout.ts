@@ -1,26 +1,22 @@
 export const microfrontendLayout = `<single-spa-router>
   <!--
-
-    This is the single-spa Layout Definition for your microfrontends.
-    See https://single-spa.js.org/docs/layout-definition/ for more information.
-
-  -->
-
-  <!-- Example layouts you might find helpful:
-
-  <nav>
-    <application name="@org/navbar"></application>
-  </nav>
-  <route path="settings">
-    <application name="@org/settings"></application>
-  </route>
-
+    Маршрутизация для микрофронтендов:
+    /login - первый микрофронтенд (форма авторизации)
+    /user - второй микрофронтенд (пользовательский интерфейс)
+    default - редирект на /login если не авторизован, иначе на /user
   -->
 
   <main>
-    <route default>
+    <route path="login">
       <application name="@react-single-spa/microfrontend"></application>
+    </route>
+    
+    <route path="user">
       <application name="@react-single-spa/microfrontend2"></application>
+    </route>
+    
+    <route default>
+      <!-- Этот роут будет обрабатываться логикой редиректа -->
     </route>
   </main>
 </single-spa-router>`;
