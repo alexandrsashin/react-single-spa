@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "antd/dist/reset.css"; // Ant Design CSS
 import React from "react";
 import ReactDOMClient from "react-dom/client";
