@@ -4,21 +4,20 @@
       "root-config": "http://localhost:3005/src/main.ts",
       "@react-single-spa/microfrontend": "http://localhost:3006/src/main.ts",
       "@react-single-spa/microfrontend2": "http://localhost:3007/src/main.ts",
+      "@react-single-spa/header": "http://localhost:3008/src/main.ts",
       "react": "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
       "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
       "react-dom/client": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.client.js",
       "react/jsx-dev-runtime": "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-dev-runtime.js",
       "react/jsx-runtime": "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-runtime.js",
       "single-spa": "https://ga.jspm.io/npm:single-spa@5.9.5/lib/esm/single-spa.min.js",
+      "single-spa-react": "https://ga.jspm.io/npm:single-spa-react@5.0.2/lib/esm/single-spa-react.js",
       "antd": "https://ga.jspm.io/npm:antd@5.21.4/es/index.js",
       "@ant-design/icons": "https://ga.jspm.io/npm:@ant-design/icons@5.5.1/es/index.js"
     },
     "scopes": {
       "https://ga.jspm.io/": {
-        "scheduler": "https://ga.jspm.io/npm:scheduler@0.23.0/dev.index.js",
-        "rc-util": "https://ga.jspm.io/npm:rc-util@5.43.0/es/index.js",
-        "classnames": "https://ga.jspm.io/npm:classnames@2.5.1/index.js",
-        "rc-motion": "https://ga.jspm.io/npm:rc-motion@2.9.3/es/index.js"
+        "scheduler": "https://ga.jspm.io/npm:scheduler@0.23.0/dev.index.js"
       }
     }
   },
@@ -27,11 +26,13 @@
       "root-config": "https://cdn.your-domain.com/root-config",
       "@react-single-spa/microfrontend": "https://cdn.your-domain.com/microfrontend",
       "@react-single-spa/microfrontend2": "https://cdn.your-domain.com/microfrontend2",
+      "@react-single-spa/header": "https://cdn.your-domain.com/header",
       "react": "https://unpkg.com/react@19.2.0",
       "react-dom": "https://unpkg.com/react-dom@19.2.0",
       "react-dom/client": "https://unpkg.com/react-dom@19.2.0/client.js",
       "react/jsx-runtime": "https://unpkg.com/react@19.2.0/jsx-runtime.js",
       "single-spa": "https://unpkg.com/single-spa@5.9.5",
+      "single-spa-react": "https://unpkg.com/single-spa-react@5.0.2",
       "antd": "https://unpkg.com/antd@5.21.4",
       "@ant-design/icons": "https://unpkg.com/@ant-design/icons@5.5.1/dist/index.umd.min.js"
     },

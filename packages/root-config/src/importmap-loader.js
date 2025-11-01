@@ -74,6 +74,7 @@
               "http://localhost:3006/src/main.ts",
             "@react-single-spa/microfrontend2":
               "http://localhost:3007/src/main.ts",
+            "@react-single-spa/header": "http://localhost:3008/src/main.ts",
             react: "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
             "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
             "react-dom/client":
@@ -84,6 +85,8 @@
               "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-runtime.js",
             "single-spa":
               "https://ga.jspm.io/npm:single-spa@5.9.5/lib/esm/single-spa.min.js",
+            "single-spa-react":
+              "https://ga.jspm.io/npm:single-spa-react@5.0.2/lib/esm/single-spa-react.js",
           },
           scopes: {
             "https://ga.jspm.io/": {

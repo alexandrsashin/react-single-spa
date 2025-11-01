@@ -40,9 +40,6 @@ function generateProductionImportMap() {
       scopes: {
         "https://ga.jspm.io/": {
           scheduler: "https://ga.jspm.io/npm:scheduler@0.23.0/dev.index.js",
-          "rc-util": "https://ga.jspm.io/npm:rc-util@5.43.0/es/index.js",
-          classnames: "https://ga.jspm.io/npm:classnames@2.5.1/index.js",
-          "rc-motion": "https://ga.jspm.io/npm:rc-motion@2.9.3/es/index.js",
         },
       },
     },
