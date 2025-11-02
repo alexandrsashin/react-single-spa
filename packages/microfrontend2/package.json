@@ -12,8 +12,5 @@
   },
   "dependencies": {
     "single-spa-react": "^5.0.2"
-  },
-  "devDependencies": {
-    "vite": "^4.4.2"
   }
 }

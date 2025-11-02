@@ -1,6 +1,6 @@
 // Глобальные типы для Window объектов
 
-interface User {
+export interface User {
   id: string;
   email: string;
   name: string;

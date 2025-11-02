@@ -14,8 +14,5 @@
     "@ant-design/icons": "^6.1.0",
     "antd": "^5.27.6",
     "single-spa-react": "^5.0.2"
-  },
-  "devDependencies": {
-    "vite": "^4.4.2"
   }
 }

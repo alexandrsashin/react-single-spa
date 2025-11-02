@@ -10,9 +10,6 @@
     "build:types": "tsc",
     "preview": "vite preview"
   },
-  "devDependencies": {
-    "vite-plugin-externalize-dependencies": "^0.10.0"
-  },
   "dependencies": {
     "single-spa": "^5.9.3",
     "single-spa-layout": "^1.6.0",
