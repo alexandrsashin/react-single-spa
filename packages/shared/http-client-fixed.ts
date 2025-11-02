@@ -1,6 +1,6 @@
 import { getAuthToken } from "./auth-utils";
 
-export interface FetchConfig extends Omit<RequestInit, "headers"> {
+interface FetchConfig extends Omit<RequestInit, "headers"> {
   requireAuth?: boolean;
   baseURL?: string;
   headers?: Record<string, string>;

@@ -2,12 +2,12 @@ import { defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import viteExternalizeDeps from "vite-plugin-externalize-dependencies";
 
-export type CreateViteOptions = {
+type CreateViteOptions = {
   externals?: string[];
   input?: string;
 };
 
-export function createViteConfig(options: CreateViteOptions = {}) {
+export default function createViteConfig(options: CreateViteOptions = {}) {
   const { externals = [], input = "src/main.ts" } = options;
 
   return defineConfig(() => {
@@ -34,5 +34,3 @@ export function createViteConfig(options: CreateViteOptions = {}) {
     return config;
   });
 }
-
-export default createViteConfig;

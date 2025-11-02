@@ -1,13 +1,13 @@
 // Глобальные типы для Window объектов
 
-export interface User {
+interface User {
   id: string;
   email: string;
   name: string;
   roles?: string[];
 }
 
-export interface AuthState {
+interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
   accessToken: string | null;
@@ -15,7 +15,7 @@ export interface AuthState {
   tokenExpiry: number | null;
 }
 
-export interface AuthService {
+interface AuthService {
   getState(): AuthState;
   isAuthenticated(): boolean;
   getCurrentUser(): User | null;
@@ -23,7 +23,7 @@ export interface AuthService {
   logout(): void;
 }
 
-export interface NavigationUtils {
+interface NavigationUtils {
   goToLogin(): void;
   goToUser(): void;
   goToHome(): void;

@@ -18,7 +18,7 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthEvents {
+interface AuthEvents {
   AUTH_STATE_CHANGED: "auth:state-changed";
   AUTH_LOGIN_SUCCESS: "auth:login-success";
   AUTH_LOGOUT: "auth:logout";

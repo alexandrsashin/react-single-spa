@@ -91,5 +91,3 @@ declare global {
 }
 
 window.NavigationUtils = NavigationUtils;
-
-export default NavigationUtils;

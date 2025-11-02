@@ -7,7 +7,7 @@ export interface AuthState {
   tokenExpiry: number | null;
 }
 
-export interface User {
+interface User {
   id: string;
   email: string;
   name: string;
@@ -22,7 +22,7 @@ export const AUTH_EVENTS = {
   AUTH_ERROR: "auth:error",
 } as const;
 
-export interface AuthAPI {
+interface AuthAPI {
   getState(): AuthState;
   isAuthenticated(): boolean;
   getCurrentUser(): User | null;
