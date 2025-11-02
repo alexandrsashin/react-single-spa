@@ -3,6 +3,7 @@ import { defineConfig } from "eslint/config";
 import tsPlugin from "typescript-eslint";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
 
 export default defineConfig([
@@ -13,6 +14,7 @@ export default defineConfig([
   ...tsPlugin.configs.recommended,
   reactPlugin.configs.flat.recommended,
   reactHooksPlugin.configs.flat.recommended,
+  reactRefresh.configs.recommended,
   {
     files: ["**/*.{js,ts,tsx}"],
     languageOptions: {
