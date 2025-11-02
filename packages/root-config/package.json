@@ -1,9 +1,11 @@
 {
   "name": "root-config",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite --port 3005",
-    "build": "vite build",
-    "build:nocheck": "vite build",
+    "build": "vite build && node scripts/post-build.js",
+    "build:nocheck": "vite build && node scripts/post-build.js",
     "lint": "eslint src --ext js,ts,tsx",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
@@ -16,8 +18,7 @@
     "vite": "^4.4.2"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite-plugin-externalize-dependencies": "^1.0.1"
+    "typescript": "^5.9.3"
   },
   "types": "dist/example-root-config.d.ts"
 }
