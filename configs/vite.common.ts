@@ -7,6 +7,7 @@ import path from "path";
 type CreateViteOptions = {
   externals?: string[];
   input?: string;
+  port: number;
 };
 
 function readPackageJson(packageDir: string): { name: string; version: string } {
@@ -24,7 +25,7 @@ function readPackageJson(packageDir: string): { name: string; version: string } 
 }
 
 export default function createViteConfig(options: CreateViteOptions = {}) {
-  const { externals = [], input = "src/main.ts" } = options;
+  const { externals = [], input = "src/main.ts", port } = options;
 
   return defineConfig(() => {
     const packageDir = process.cwd();
@@ -44,6 +45,9 @@ export default function createViteConfig(options: CreateViteOptions = {}) {
 
     const config: UserConfig = {
       plugins,
+      server: {
+        port,
+      },
       build: {
         rollupOptions: {
           input,

@@ -12,4 +12,5 @@ const externalDependencies = [
 export default createViteConfig({
   externals: externalDependencies,
   input: "src/main.ts",
+  port: 3007,
 });

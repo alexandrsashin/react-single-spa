@@ -5,4 +5,5 @@ const externalDependencies = ["single-spa"];
 export default createViteConfig({
   externals: externalDependencies,
   input: "src/main.ts",
+  port: 3006,
 });
