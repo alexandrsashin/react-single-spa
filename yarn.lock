@@ -3285,12 +3285,10 @@ __metadata:
     "@ant-design/icons": "npm:^6.1.0"
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.2.2"
-    "@vitejs/plugin-react": "npm:^5.1.0"
     antd: "npm:^5.27.6"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"
-    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -3925,11 +3923,9 @@ __metadata:
   dependencies:
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.2.2"
-    "@vitejs/plugin-react": "npm:^5.1.0"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"
-    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -3940,12 +3936,10 @@ __metadata:
     "@ant-design/icons": "npm:^6.1.0"
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.2.2"
-    "@vitejs/plugin-react": "npm:^5.1.0"
     antd: "npm:^5.27.6"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"
-    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
