@@ -9,6 +9,7 @@ export const { bootstrap, mount, unmount } = singleSpaReact({
   ReactDOMClient,
   rootComponent,
   errorBoundary(err: any, info: any, props: any) {
-    console.error(err);
+    console.error("Microfrontend 2 error:", err, info, props);
+    return React.createElement("div", {}, "Microfrontend 2 Error");
   },
 });

@@ -15,5 +15,9 @@
     "single-spa-layout": "^1.6.0",
     "vite": "^4.4.2"
   },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite-plugin-externalize-dependencies": "^1.0.1"
+  },
   "types": "dist/example-root-config.d.ts"
 }

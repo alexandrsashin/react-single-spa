@@ -2722,6 +2722,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-unused-imports@npm:^3.1.0":
+  version: 3.2.0
+  resolution: "eslint-plugin-unused-imports@npm:3.2.0"
+  dependencies:
+    eslint-rule-composer: "npm:^0.3.0"
+  peerDependencies:
+    "@typescript-eslint/eslint-plugin": 6 - 7
+    eslint: 8
+  peerDependenciesMeta:
+    "@typescript-eslint/eslint-plugin":
+      optional: true
+  checksum: 10c0/70c93efaa4dccd1172db3858b27968184c97cb8b7ffb2d9e6ffb09d9509863c70651b533b48eec4d10bc7f633d7f50fd190fdd5b36e8cac2c4efd5cecb5d5d98
+  languageName: node
+  linkType: hard
+
+"eslint-rule-composer@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "eslint-rule-composer@npm:0.3.0"
+  checksum: 10c0/1f0c40d209e1503a955101a0dbba37e7fc67c8aaa47a5b9ae0b0fcbae7022c86e52b3df2b1b9ffd658e16cd80f31fff92e7222460a44d8251e61d49e0af79a07
+  languageName: node
+  linkType: hard
+
 "eslint-scope@npm:^8.4.0":
   version: 8.4.0
   resolution: "eslint-scope@npm:8.4.0"
@@ -3261,8 +3283,14 @@ __metadata:
   resolution: "header@workspace:packages/header"
   dependencies:
     "@ant-design/icons": "npm:^6.1.0"
+    "@types/react": "npm:^19.2.2"
+    "@types/react-dom": "npm:^19.2.2"
+    "@vitejs/plugin-react": "npm:^5.1.0"
     antd: "npm:^5.27.6"
     single-spa-react: "npm:^5.0.2"
+    typescript: "npm:^5.9.3"
+    vite: "npm:^7.1.12"
+    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -3895,7 +3923,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "microfrontend2@workspace:packages/microfrontend2"
   dependencies:
+    "@types/react": "npm:^19.2.2"
+    "@types/react-dom": "npm:^19.2.2"
+    "@vitejs/plugin-react": "npm:^5.1.0"
     single-spa-react: "npm:^5.0.2"
+    typescript: "npm:^5.9.3"
+    vite: "npm:^7.1.12"
+    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -3904,8 +3938,14 @@ __metadata:
   resolution: "microfrontend@workspace:packages/microfrontend"
   dependencies:
     "@ant-design/icons": "npm:^6.1.0"
+    "@types/react": "npm:^19.2.2"
+    "@types/react-dom": "npm:^19.2.2"
+    "@vitejs/plugin-react": "npm:^5.1.0"
     antd: "npm:^5.27.6"
     single-spa-react: "npm:^5.0.2"
+    typescript: "npm:^5.9.3"
+    vite: "npm:^7.1.12"
+    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 
@@ -5037,6 +5077,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.0.1"
     eslint-plugin-react-refresh: "npm:^0.4.24"
+    eslint-plugin-unused-imports: "npm:^3.1.0"
     globals: "npm:^16.5.0"
     jiti: "npm:^2.6.1"
     knip: "npm:^5.0.0"
@@ -5242,7 +5283,9 @@ __metadata:
   dependencies:
     single-spa: "npm:^5.9.3"
     single-spa-layout: "npm:^1.6.0"
+    typescript: "npm:^5.9.3"
     vite: "npm:^4.4.2"
+    vite-plugin-externalize-dependencies: "npm:^1.0.1"
   languageName: unknown
   linkType: soft
 

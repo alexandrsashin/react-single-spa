@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth, LogoutButton, UserInfo, ProtectedRoute } from "../../shared/auth-hooks";
 import { httpClient } from "../../shared/http-client-fixed";
 import { LoginForm } from "./components/LoginForm";

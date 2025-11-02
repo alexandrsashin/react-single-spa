@@ -26,8 +26,7 @@
 
 - `getAuthService()` - Получение AuthService из global scope
 - `getAuthToken()` - Быстрое получение токена для API
-- `isUserAuthenticated()` - Проверка аутентификации
-- `hasRole()`, `hasPermission()` - Проверка ролей и прав доступа
+- `hasPermission()` - Проверка ролей и прав доступа
 
 ### 3. HTTP Client (`packages/shared/http-client-fixed.ts`)
 
@@ -35,7 +34,6 @@
 
 - `authFetch()` - Wrapper для fetch с автоматическим добавлением токена
 - `httpClient` - Готовые методы (get, post, put, delete)
-- `createApiClient()` - Фабрика для создания API клиентов
 
 ### 4. React Hooks (`packages/shared/auth-hooks.tsx`)
 

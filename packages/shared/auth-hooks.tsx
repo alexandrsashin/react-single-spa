@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { AuthState, getAuthService, hasRole, hasPermission } from "./auth-utils";
+import { AuthState, getAuthService, hasPermission } from "./auth-utils";
 
 // Hook для работы с авторизацией
 export function useAuth() {
@@ -59,18 +59,6 @@ export function useAuth() {
     logout,
     getValidToken,
   };
-}
-
-// Hook для проверки ролей
-function useRole(role: string): boolean {
-  const { user } = useAuth();
-  return hasRole(user, role);
-}
-
-// Hook для проверки прав доступа
-function usePermissions(permissions: string[]): boolean {
-  const { user } = useAuth();
-  return hasPermission(user, permissions);
 }
 
 // React компонент для защищенных маршрутов
