@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --loader ts-node/esm index.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.0.0",
+    "@fastify/static": "^6.9.0",
+    "fastify": "^4.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.9.3"
+  }
+}
