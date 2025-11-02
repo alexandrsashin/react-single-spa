@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "single-spa-react": "^5.0.2"
+    "single-spa-react": "^6.0.2"
   },
   "devDependencies": {
     "@types/react": "^19.2.2",
