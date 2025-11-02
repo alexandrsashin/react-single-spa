@@ -6,10 +6,17 @@ import "./auth/RedirectService"; // Инициализируем RedirectService
 import "./navigation-utils"; // Инициализируем утилиты навигации
 
 const routes = constructRoutes(microfrontendLayout);
+
 const applications = constructApplications({
   routes,
-  loadApp({ name }: { name: string }) {
-    return import(/* @vite-ignore */ name);
+  async loadApp({ name }: { name: string }) {
+    try {
+      const module = await import(/* @vite-ignore */ name);
+      return module;
+    } catch (error) {
+      console.error(`Failed to load application ${name}:`, error);
+      throw error;
+    }
   },
 });
 const layoutEngine = constructLayoutEngine({ routes, applications });

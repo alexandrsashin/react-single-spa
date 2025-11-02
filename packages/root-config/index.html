@@ -43,14 +43,24 @@
         .then(() => {
           console.log("Environment:", window.getEnvironment());
           // Import root config after importmap is loaded
-          import("root-config").catch((err) => {
+          // Tell Vite to ignore rewriting this specifier so the importmap
+          // entry for "root-config" can take effect at runtime.
+          import(/* @vite-ignore */ "root-config").catch((err) => {
             console.error("Failed to load root-config:", err);
           });
         })
         .catch((err) => {
           console.error("Failed to load importmap, falling back to static:", err);
           // Fallback: try to import anyway
-          import("root-config").catch((importErr) => {
+          // If importmap failed to load, try a direct dev path so the browser
+          // doesn't attempt to fetch a bare specifier like /root-config which
+          // returns HTML instead of JS.
+          const devEntry = "/src/main.ts";
+          const specifier =
+            typeof window.getEnvironment === "function" && window.getEnvironment() === "development"
+              ? devEntry
+              : "root-config";
+          import(/* @vite-ignore */ specifier).catch((importErr) => {
             console.error("Failed to load root-config even with fallback:", importErr);
           });
         });
