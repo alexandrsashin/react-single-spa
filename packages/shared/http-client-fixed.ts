@@ -7,7 +7,7 @@ interface FetchConfig extends Omit<RequestInit, "headers"> {
 }
 
 // Расширенная версия fetch с автоматической авторизацией
-export async function authFetch(url: string, options: FetchConfig = {}): Promise<Response> {
+async function authFetch(url: string, options: FetchConfig = {}): Promise<Response> {
   const { requireAuth = true, baseURL = "", headers = {}, ...fetchOptions } = options;
 
   // Формируем полный URL
@@ -100,7 +100,7 @@ export const httpClient = {
 };
 
 // Утилита для создания конфигурации API клиента
-export function createApiClient(baseURL: string, defaultConfig: FetchConfig = {}) {
+function createApiClient(baseURL: string, defaultConfig: FetchConfig = {}) {
   return {
     async request(url: string, config: FetchConfig = {}) {
       return authFetch(url, {

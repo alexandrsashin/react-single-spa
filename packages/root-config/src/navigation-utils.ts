@@ -2,7 +2,7 @@
 
 import { authService } from "./auth/AuthService";
 
-export class NavigationUtils {
+class NavigationUtils {
   // Навигация на страницу логина
   static goToLogin(): void {
     window.history.pushState(null, "", "/login");

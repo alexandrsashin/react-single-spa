@@ -62,13 +62,13 @@ export function useAuth() {
 }
 
 // Hook для проверки ролей
-export function useRole(role: string): boolean {
+function useRole(role: string): boolean {
   const { user } = useAuth();
   return hasRole(user, role);
 }
 
 // Hook для проверки прав доступа
-export function usePermissions(permissions: string[]): boolean {
+function usePermissions(permissions: string[]): boolean {
   const { user } = useAuth();
   return hasPermission(user, permissions);
 }

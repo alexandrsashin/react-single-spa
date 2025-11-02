@@ -54,7 +54,7 @@ export function hasPermission(user: User | null, permissions: string[]): boolean
 }
 
 // Утилита для прослушивания событий авторизации
-export function subscribeToAuthEvents(
+function subscribeToAuthEvents(
   eventType: keyof typeof AUTH_EVENTS,
   callback: (event: CustomEvent) => void
 ): () => void {
@@ -76,13 +76,13 @@ export async function getAuthToken(): Promise<string | null> {
 }
 
 // Проверка аутентификации
-export function isUserAuthenticated(): boolean {
+function isUserAuthenticated(): boolean {
   const authService = getAuthService();
   return authService?.isAuthenticated() || false;
 }
 
 // Получение текущего пользователя
-export function getCurrentUser(): User | null {
+function getCurrentUser(): User | null {
   const authService = getAuthService();
   return authService?.getCurrentUser() || null;
 }

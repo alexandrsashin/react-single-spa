@@ -137,7 +137,7 @@ class RedirectService {
 }
 
 // Создаем singleton instance
-export const redirectService = new RedirectService();
+const redirectService = new RedirectService();
 
 // Экспортируем для использования в microfrontends
 declare global {
