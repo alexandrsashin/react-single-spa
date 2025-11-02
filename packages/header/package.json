@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
-    "antd": "^5.27.6",
+    "antd": "^5.28.0",
     "single-spa-react": "^5.0.2"
   },
   "devDependencies": {

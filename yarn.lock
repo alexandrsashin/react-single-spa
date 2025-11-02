@@ -1226,16 +1226,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rc-component/qrcode@npm:~1.0.1":
-  version: 1.0.1
-  resolution: "@rc-component/qrcode@npm:1.0.1"
+"@rc-component/qrcode@npm:~1.1.0":
+  version: 1.1.0
+  resolution: "@rc-component/qrcode@npm:1.1.0"
   dependencies:
     "@babel/runtime": "npm:^7.24.7"
     classnames: "npm:^2.3.2"
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/9d1f8fdf10c1c6774fd8500ccab4c386c21ef9f2f8ce40c5eef59c7c4ff6e296df9b4ebdf6949c2d7a734ac58a4407e7a434fd844f0f951e2000c44c3326828a
+  checksum: 10c0/24c3bde6a16735f84330c0bfc499b4c912e31e90894e26a1a2b64ce5374b79de0c5328c7d731109508eed583ec6d5c085581cba665a7e69debb8d7ca7c3fcf84
   languageName: node
   linkType: hard
 
@@ -1762,9 +1762,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^5.27.6":
-  version: 5.27.6
-  resolution: "antd@npm:5.27.6"
+"antd@npm:^5.28.0":
+  version: 5.28.0
+  resolution: "antd@npm:5.28.0"
   dependencies:
     "@ant-design/colors": "npm:^7.2.1"
     "@ant-design/cssinjs": "npm:^1.23.0"
@@ -1775,7 +1775,7 @@ __metadata:
     "@babel/runtime": "npm:^7.26.0"
     "@rc-component/color-picker": "npm:~2.0.1"
     "@rc-component/mutate-observer": "npm:^1.1.0"
-    "@rc-component/qrcode": "npm:~1.0.1"
+    "@rc-component/qrcode": "npm:~1.1.0"
     "@rc-component/tour": "npm:~1.15.1"
     "@rc-component/trigger": "npm:^2.3.0"
     classnames: "npm:^2.5.1"
@@ -1787,7 +1787,7 @@ __metadata:
     rc-dialog: "npm:~9.6.0"
     rc-drawer: "npm:~7.3.0"
     rc-dropdown: "npm:~4.2.1"
-    rc-field-form: "npm:~2.7.0"
+    rc-field-form: "npm:~2.7.1"
     rc-image: "npm:~7.12.0"
     rc-input: "npm:~1.8.0"
     rc-input-number: "npm:~9.5.0"
@@ -1811,14 +1811,14 @@ __metadata:
     rc-tooltip: "npm:~6.4.0"
     rc-tree: "npm:~5.13.1"
     rc-tree-select: "npm:~5.27.0"
-    rc-upload: "npm:~4.9.2"
+    rc-upload: "npm:~4.11.0"
     rc-util: "npm:^5.44.4"
     scroll-into-view-if-needed: "npm:^3.1.0"
     throttle-debounce: "npm:^5.0.2"
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/2b3b30ac9c39c7fd374a9a81de64bb032c6e6cda1b9ac26ce5a099775f8e5851ea97cee429ff03eeb41ad1e9a0e1947fa969c90b9d8c73713ec57168c5b4a3d9
+  checksum: 10c0/06c08308a7fc93085770e957d7980c367f7839938aa8b87e018f88dd6b12a12abc230ff80eeda78afa33a4357122ead19da6d16ea1adbe534bc1c352d37fbc8f
   languageName: node
   linkType: hard
 
@@ -2722,25 +2722,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-unused-imports@npm:^3.1.0":
-  version: 3.2.0
-  resolution: "eslint-plugin-unused-imports@npm:3.2.0"
-  dependencies:
-    eslint-rule-composer: "npm:^0.3.0"
+"eslint-plugin-unused-imports@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "eslint-plugin-unused-imports@npm:4.3.0"
   peerDependencies:
-    "@typescript-eslint/eslint-plugin": 6 - 7
-    eslint: 8
+    "@typescript-eslint/eslint-plugin": ^8.0.0-0 || ^7.0.0 || ^6.0.0 || ^5.0.0
+    eslint: ^9.0.0 || ^8.0.0
   peerDependenciesMeta:
     "@typescript-eslint/eslint-plugin":
       optional: true
-  checksum: 10c0/70c93efaa4dccd1172db3858b27968184c97cb8b7ffb2d9e6ffb09d9509863c70651b533b48eec4d10bc7f633d7f50fd190fdd5b36e8cac2c4efd5cecb5d5d98
-  languageName: node
-  linkType: hard
-
-"eslint-rule-composer@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "eslint-rule-composer@npm:0.3.0"
-  checksum: 10c0/1f0c40d209e1503a955101a0dbba37e7fc67c8aaa47a5b9ae0b0fcbae7022c86e52b3df2b1b9ffd658e16cd80f31fff92e7222460a44d8251e61d49e0af79a07
+  checksum: 10c0/aa4d8ebd8bea5fc0ac8d3fdeb0d0ed2dd0fccb96a1f5569bca772f71b4c45edd1b3c32d9754fb175c45ccf4d123725f333bf99380b9896bb678a8d599e290aa3
   languageName: node
   linkType: hard
 
@@ -3285,7 +3276,7 @@ __metadata:
     "@ant-design/icons": "npm:^6.1.0"
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.2.2"
-    antd: "npm:^5.27.6"
+    antd: "npm:^5.28.0"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"
@@ -3798,7 +3789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knip@npm:^5.0.0":
+"knip@npm:^5.66.4":
   version: 5.66.4
   resolution: "knip@npm:5.66.4"
   dependencies:
@@ -3936,7 +3927,7 @@ __metadata:
     "@ant-design/icons": "npm:^6.1.0"
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.2.2"
-    antd: "npm:^5.27.6"
+    antd: "npm:^5.28.0"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"
@@ -4584,7 +4575,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-field-form@npm:~2.7.0":
+"rc-field-form@npm:~2.7.1":
   version: 2.7.1
   resolution: "rc-field-form@npm:2.7.1"
   dependencies:
@@ -4984,9 +4975,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-upload@npm:~4.9.2":
-  version: 4.9.2
-  resolution: "rc-upload@npm:4.9.2"
+"rc-upload@npm:~4.11.0":
+  version: 4.11.0
+  resolution: "rc-upload@npm:4.11.0"
   dependencies:
     "@babel/runtime": "npm:^7.18.3"
     classnames: "npm:^2.2.5"
@@ -4994,7 +4985,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 10c0/2299f4a3d8fa87449178761fcdc3c574b21e34d2f6816ecb6c08729f699e67b23d1284f4077b9ceceb1cc8502d7c350311bc2d1dfacec7f6780d2bf9691888cb
+  checksum: 10c0/9ce59e22e0f9839e482fd37e63d8489e1a9d418113bfe39cd4d2b1e88f59236d4f7c60a3bb5928d2d85781d6f4cf8c30b6085863c802de605ef339fa415903d3
   languageName: node
   linkType: hard
 
@@ -5071,10 +5062,10 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.0.1"
     eslint-plugin-react-refresh: "npm:^0.4.24"
-    eslint-plugin-unused-imports: "npm:^3.1.0"
+    eslint-plugin-unused-imports: "npm:^4.3.0"
     globals: "npm:^16.5.0"
     jiti: "npm:^2.6.1"
-    knip: "npm:^5.0.0"
+    knip: "npm:^5.66.4"
     prettier: "npm:^3.6.2"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
