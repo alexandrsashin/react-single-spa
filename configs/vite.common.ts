@@ -24,7 +24,7 @@ function readPackageJson(packageDir: string): { name: string; version: string } 
   }
 }
 
-export default function createViteConfig(options: CreateViteOptions = {}) {
+export default function createViteConfig(options: CreateViteOptions) {
   const { externals = [], input = "src/main.ts", port } = options;
 
   return defineConfig(() => {
