@@ -27,8 +27,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
           onSuccess?.();
         })
         .catch((error: any) => {
-          const errorMessage =
-            error instanceof Error ? error.message : "Login failed";
+          const errorMessage = error instanceof Error ? error.message : "Login failed";
           setError(errorMessage);
           onError?.(errorMessage);
         })
@@ -42,26 +41,11 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
   };
 
   return (
-    <Card
-      title="Sign In to Microfrontend 1"
-      style={{ maxWidth: 400, margin: "0 auto" }}
-    >
-      <Form
-        form={form}
-        name="login"
-        onFinish={handleSubmit}
-        layout="vertical"
-        size="large"
-      >
+    <Card title="Sign In to Microfrontend 1" style={{ maxWidth: 400, margin: "0 auto" }}>
+      <Form form={form} name="login" onFinish={handleSubmit} layout="vertical" size="large">
         {error && (
           <Form.Item>
-            <Alert
-              message={error}
-              type="error"
-              showIcon
-              closable
-              onClose={() => setError(null)}
-            />
+            <Alert message={error} type="error" showIcon closable onClose={() => setError(null)} />
           </Form.Item>
         )}
 
@@ -73,11 +57,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
             { type: "email", message: "Please enter a valid email!" },
           ]}
         >
-          <Input
-            prefix={<UserOutlined />}
-            placeholder="test@example.com"
-            autoComplete="username"
-          />
+          <Input prefix={<UserOutlined />} placeholder="test@example.com" autoComplete="username" />
         </Form.Item>
 
         <Form.Item

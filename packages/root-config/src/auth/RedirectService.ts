@@ -13,9 +13,7 @@ class RedirectService {
 
     // Инициализируем редиректы после загрузки DOM
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () =>
-        this.setupRedirects()
-      );
+      document.addEventListener("DOMContentLoaded", () => this.setupRedirects());
     } else {
       this.setupRedirects();
     }

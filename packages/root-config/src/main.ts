@@ -1,9 +1,5 @@
 import { registerApplication, start } from "single-spa";
-import {
-  constructApplications,
-  constructRoutes,
-  constructLayoutEngine,
-} from "single-spa-layout";
+import { constructApplications, constructRoutes, constructLayoutEngine } from "single-spa-layout";
 import { microfrontendLayout } from "./microfrontend-layout";
 import "./auth/AuthService"; // Инициализируем AuthService
 import "./auth/RedirectService"; // Инициализируем RedirectService для обработки редиректов

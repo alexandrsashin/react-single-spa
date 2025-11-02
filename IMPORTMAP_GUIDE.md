@@ -16,7 +16,6 @@
 ### Логика определения среды
 
 1. **Development** - если:
-
    - `hostname === 'localhost'` или `127.0.0.1`
    - URL параметр `?env=development`
 

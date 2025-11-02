@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout, Space, Avatar, Dropdown, Typography, Button } from "antd";
-import {
-  UserOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, SettingOutlined } from "@ant-design/icons";
 import NotificationBell from "./NotificationBell";
 import { User } from "../types";
 
@@ -99,11 +95,7 @@ const Header: React.FC = () => {
           <NotificationBell userId={user.id} />
 
           {/* Информация о пользователе */}
-          <Dropdown
-            menu={{ items: userMenuItems }}
-            trigger={["click"]}
-            placement="bottomRight"
-          >
+          <Dropdown menu={{ items: userMenuItems }} trigger={["click"]} placement="bottomRight">
             <Button
               type="text"
               style={{
@@ -114,11 +106,7 @@ const Header: React.FC = () => {
                 gap: "8px",
               }}
             >
-              <Avatar
-                size="small"
-                icon={<UserOutlined />}
-                style={{ backgroundColor: "#1890ff" }}
-              />
+              <Avatar size="small" icon={<UserOutlined />} style={{ backgroundColor: "#1890ff" }} />
               <Text strong>{user.name}</Text>
             </Button>
           </Dropdown>

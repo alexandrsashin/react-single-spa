@@ -29,9 +29,7 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div
-        style={{ padding: "20px", border: "2px solid #FF9800", margin: "10px" }}
-      >
+      <div style={{ padding: "20px", border: "2px solid #FF9800", margin: "10px" }}>
         <h2>Microfrontend 2 - Authentication Required</h2>
         <p>You need to be authenticated to see this microfrontend.</p>
         <p>Please log in through Microfrontend 1 first.</p>
@@ -40,9 +38,7 @@ function App() {
   }
 
   return (
-    <div
-      style={{ padding: "20px", border: "2px solid #2196F3", margin: "10px" }}
-    >
+    <div style={{ padding: "20px", border: "2px solid #2196F3", margin: "10px" }}>
       <h2>Microfrontend 2 - Shared Auth State</h2>
 
       <div style={{ marginBottom: "20px" }}>
@@ -63,24 +59,19 @@ function App() {
 
       <div style={{ marginBottom: "20px" }}>
         <h3>Actions</h3>
-        <button
-          onClick={handleSecureApiCall}
-          style={{ marginRight: "10px", padding: "8px 16px" }}
-        >
+        <button onClick={handleSecureApiCall} style={{ marginRight: "10px", padding: "8px 16px" }}>
           Test Secure API
         </button>
 
-        <LogoutButton
-          onLogout={() => console.log("Logged out from microfrontend 2")}
-        >
+        <LogoutButton onLogout={() => console.log("Logged out from microfrontend 2")}>
           Logout from MF2
         </LogoutButton>
       </div>
 
       <div style={{ fontSize: "12px", color: "#666" }}>
         <p>
-          This microfrontend automatically receives authentication state from
-          the centralized AuthService in root-config.
+          This microfrontend automatically receives authentication state from the centralized
+          AuthService in root-config.
         </p>
       </div>
     </div>

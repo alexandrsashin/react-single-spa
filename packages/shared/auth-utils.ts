@@ -38,9 +38,7 @@ export function getAuthService(): AuthAPI | null {
     return window.authService;
   }
 
-  console.warn(
-    "AuthService not available. Make sure root-config is loaded first."
-  );
+  console.warn("AuthService not available. Make sure root-config is loaded first.");
   return null;
 }
 
@@ -50,10 +48,7 @@ export function hasRole(user: User | null, role: string): boolean {
 }
 
 // Утилита для проверки прав доступа
-export function hasPermission(
-  user: User | null,
-  permissions: string[]
-): boolean {
+export function hasPermission(user: User | null, permissions: string[]): boolean {
   if (!user?.roles) return false;
   return permissions.some((permission) => user.roles?.includes(permission));
 }

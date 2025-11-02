@@ -6,11 +6,7 @@
     const host = window.location.hostname;
 
     // Локальная разработка
-    if (
-      host === "localhost" ||
-      host === "127.0.0.1" ||
-      host.includes(".local")
-    ) {
+    if (host === "localhost" || host === "127.0.0.1" || host.includes(".local")) {
       return "development";
     }
 
@@ -23,9 +19,7 @@
 
     // Проверяем переменную среды (если доступна)
     if (typeof process !== "undefined" && process.env && process.env.NODE_ENV) {
-      return process.env.NODE_ENV === "development"
-        ? "development"
-        : "production";
+      return process.env.NODE_ENV === "development" ? "development" : "production";
     }
 
     // По умолчанию production для продакшена
@@ -46,9 +40,7 @@
       const importMapConfig = config[environment];
 
       if (!importMapConfig) {
-        throw new Error(
-          `No importmap configuration found for environment: ${environment}`
-        );
+        throw new Error(`No importmap configuration found for environment: ${environment}`);
       }
 
       // Создаем и вставляем importmap
@@ -70,21 +62,15 @@
         const fallbackImportMap = {
           imports: {
             "root-config": "http://localhost:3005/src/main.ts",
-            "@react-single-spa/microfrontend":
-              "http://localhost:3006/src/main.ts",
-            "@react-single-spa/microfrontend2":
-              "http://localhost:3007/src/main.ts",
+            "@react-single-spa/microfrontend": "http://localhost:3006/src/main.ts",
+            "@react-single-spa/microfrontend2": "http://localhost:3007/src/main.ts",
             "@react-single-spa/header": "http://localhost:3008/src/main.ts",
             react: "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
             "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
-            "react-dom/client":
-              "https://ga.jspm.io/npm:react-dom@19.2.0/dev.client.js",
-            "react/jsx-dev-runtime":
-              "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-dev-runtime.js",
-            "react/jsx-runtime":
-              "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-runtime.js",
-            "single-spa":
-              "https://ga.jspm.io/npm:single-spa@5.9.5/lib/esm/single-spa.min.js",
+            "react-dom/client": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.client.js",
+            "react/jsx-dev-runtime": "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-dev-runtime.js",
+            "react/jsx-runtime": "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-runtime.js",
+            "single-spa": "https://ga.jspm.io/npm:single-spa@5.9.5/lib/esm/single-spa.min.js",
             "single-spa-react":
               "https://ga.jspm.io/npm:single-spa-react@5.0.2/lib/esm/single-spa-react.js",
           },
@@ -97,11 +83,7 @@
 
         const importMapScript = document.createElement("script");
         importMapScript.type = "importmap";
-        importMapScript.textContent = JSON.stringify(
-          fallbackImportMap,
-          null,
-          2
-        );
+        importMapScript.textContent = JSON.stringify(fallbackImportMap, null, 2);
         document.head.appendChild(importMapScript);
       }
 

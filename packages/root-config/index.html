@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -14,8 +14,7 @@
       const origins = ["http://localhost:3006", "http://localhost:3007"];
 
       function appendReactRefreshScript(origin) {
-        const reactRefreshInteropabilityScript =
-          document.createElement("script");
+        const reactRefreshInteropabilityScript = document.createElement("script");
         reactRefreshInteropabilityScript.type = "module";
         reactRefreshInteropabilityScript.textContent = `
     import RefreshRuntime from '${origin}/@react-refresh';
@@ -29,10 +28,7 @@
       window.__vite_plugin_react_preamble_installed__ = true;
 
       // Only setup React Refresh in development
-      if (
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-      ) {
+      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
         origins.forEach((origin) => {
           appendReactRefreshScript(origin);
         });
@@ -52,16 +48,10 @@
           });
         })
         .catch((err) => {
-          console.error(
-            "Failed to load importmap, falling back to static:",
-            err
-          );
+          console.error("Failed to load importmap, falling back to static:", err);
           // Fallback: try to import anyway
           import("root-config").catch((importErr) => {
-            console.error(
-              "Failed to load root-config even with fallback:",
-              importErr
-            );
+            console.error("Failed to load root-config even with fallback:", importErr);
           });
         });
     </script>

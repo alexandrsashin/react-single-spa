@@ -73,9 +73,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
   const markAllAsRead = () => {
@@ -133,9 +131,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
       </div>
 
       {notifications.length === 0 ? (
-        <div style={{ textAlign: "center", padding: 20, color: "#999" }}>
-          Нет уведомлений
-        </div>
+        <div style={{ textAlign: "center", padding: 20, color: "#999" }}>Нет уведомлений</div>
       ) : (
         <List
           dataSource={notifications}
@@ -163,9 +159,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
             >
               <List.Item.Meta
                 title={
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div
                       style={{
                         width: 8,
@@ -174,19 +168,14 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
                         backgroundColor: getTypeColor(notification.type),
                       }}
                     />
-                    <Text
-                      strong={!notification.read}
-                      style={{ fontSize: "14px" }}
-                    >
+                    <Text strong={!notification.read} style={{ fontSize: "14px" }}>
                       {notification.title}
                     </Text>
                   </div>
                 }
                 description={
                   <div>
-                    <Text style={{ fontSize: "12px", color: "#666" }}>
-                      {notification.message}
-                    </Text>
+                    <Text style={{ fontSize: "12px", color: "#666" }}>{notification.message}</Text>
                     <br />
                     <Text style={{ fontSize: "11px", color: "#999" }}>
                       {formatTimestamp(notification.timestamp)}

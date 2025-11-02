@@ -1,9 +1,29 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { AuthState, getAuthService, hasRole, hasPermission } from "./auth-utils";
+import React from "react";
+import { AuthState, User } from "../root-config/src/auth/types";
 
-// Hook для работы с авторизацией
+export interface AuthAPI {
+  getState(): AuthState;
+  isAuthenticated(): boolean;
+  getCurrentUser(): User | null;
+  getValidAccessToken(): Promise<string | null>;
+  login(credentials: { email: string; password: string }): Promise<void>;
+  logout(): void;
+  subscribe(callback: (state: AuthState) => void): () => void;
+}
+
+// Получение AuthService из global scope (root-config)
+export function getAuthService(): AuthAPI | null {
+  if (typeof window !== "undefined" && (window as any).authService) {
+    return (window as any).authService;
+  }
+
+  console.warn("AuthService not available. Make sure root-config is loaded first.");
+  return null;
+}
+
+// Hook для React компонентов
 export function useAuth() {
-  const [authState, setAuthState] = useState<AuthState>(() => {
+  const [authState, setAuthState] = React.useState<AuthState>(() => {
     const authService = getAuthService();
     return (
       authService?.getState() || {
@@ -16,7 +36,7 @@ export function useAuth() {
     );
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     const authService = getAuthService();
     if (!authService) return;
 
@@ -31,21 +51,21 @@ export function useAuth() {
     return unsubscribe;
   }, []);
 
-  const login = useCallback(async (credentials: { email: string; password: string }) => {
+  const login = React.useCallback(async (credentials: { email: string; password: string }) => {
     const authService = getAuthService();
     if (authService) {
       await authService.login(credentials);
     }
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = React.useCallback(() => {
     const authService = getAuthService();
     if (authService) {
       authService.logout();
     }
   }, []);
 
-  const getValidToken = useCallback(async () => {
+  const getValidToken = React.useCallback(async () => {
     const authService = getAuthService();
     if (authService) {
       return await authService.getValidAccessToken();
@@ -61,16 +81,15 @@ export function useAuth() {
   };
 }
 
-// Hook для проверки ролей
-export function useRole(role: string): boolean {
-  const { user } = useAuth();
-  return hasRole(user, role);
+// Утилита для проверки ролей
+export function hasRole(user: User | null, role: string): boolean {
+  return user?.roles?.includes(role) || false;
 }
 
-// Hook для проверки прав доступа
-export function usePermissions(permissions: string[]): boolean {
-  const { user } = useAuth();
-  return hasPermission(user, permissions);
+// Утилита для проверки прав доступа
+export function hasPermission(user: User | null, permissions: string[]): boolean {
+  if (!user?.roles) return false;
+  return permissions.some((permission) => user.roles?.includes(permission));
 }
 
 // React компонент для защищенных маршрутов
@@ -94,42 +113,15 @@ export function ProtectedRoute({
   }
 
   if (requiredRoles.length > 0 && !hasPermission(user, requiredRoles)) {
-    return <>{fallback}</>;
+    return (<>{fallback}</>) as JSX.Element;
   }
 
   return <>{children}</>;
 }
 
-// Компонент для отображения информации о пользователе
-export function UserInfo(): JSX.Element {
-  const { user, isAuthenticated } = useAuth();
-
-  if (!isAuthenticated || !user) {
-    return <div>Not authenticated</div>;
+// Глобальные типы для TypeScript
+declare global {
+  interface Window {
+    authService: AuthAPI;
   }
-
-  return (
-    <div>
-      <p>Welcome, {user.name}!</p>
-      <p>Email: {user.email}</p>
-      {user.roles && user.roles.length > 0 && <p>Roles: {user.roles.join(", ")}</p>}
-    </div>
-  );
-}
-
-// Компонент кнопки выхода
-interface LogoutButtonProps {
-  children?: React.ReactNode;
-  onLogout?: () => void;
-}
-
-export function LogoutButton({ children = "Logout", onLogout }: LogoutButtonProps): JSX.Element {
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-    logout();
-    onLogout?.();
-  };
-
-  return <button onClick={handleLogout}>{children}</button>;
 }
