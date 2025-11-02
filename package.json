@@ -14,8 +14,8 @@
     "start:production": "yarn generate-importmap && yarn workspace root-config preview",
     "lint": "eslint . --config configs/eslint.config.ts",
     "lint:fix": "eslint . --config configs/eslint.config.ts --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "prettier --write --config configs/.prettierrc .",
+    "format:check": "prettier --check --config configs/.prettierrc ."
   },
   "repository": {
     "type": "git",
