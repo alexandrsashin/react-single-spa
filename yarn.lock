@@ -1228,32 +1228,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
-  version: 15.7.15
-  resolution: "@types/prop-types@npm:15.7.15"
-  checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^18.2.6":
-  version: 18.3.7
-  resolution: "@types/react-dom@npm:18.3.7"
-  peerDependencies:
-    "@types/react": ^18.0.0
-  checksum: 10c0/8bd309e2c3d1604a28a736a24f96cbadf6c05d5288cfef8883b74f4054c961b6b3a5e997fd5686e492be903c8f3380dba5ec017eff3906b1256529cd2d39603e
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.2.14":
-  version: 18.3.26
-  resolution: "@types/react@npm:18.3.26"
-  dependencies:
-    "@types/prop-types": "npm:*"
-    csstype: "npm:^3.0.2"
-  checksum: 10c0/7b62d91c33758f14637311921c92db6045b6328e2300666a35ef8130d06385e39acada005eaf317eee93228edc10ea5f0cd34a0385654d2014d24699a65bfeef
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:^7.3.12":
   version: 7.7.1
   resolution: "@types/semver@npm:7.7.1"
@@ -2117,7 +2091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.0.2, csstype@npm:^3.1.3":
+"csstype@npm:^3.1.3":
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10c0/80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
@@ -3440,8 +3414,6 @@ __metadata:
   resolution: "header@workspace:packages/header"
   dependencies:
     "@ant-design/icons": "npm:^6.1.0"
-    "@types/react": "npm:^18.2.14"
-    "@types/react-dom": "npm:^18.2.6"
     "@typescript-eslint/eslint-plugin": "npm:^5.61.0"
     "@typescript-eslint/parser": "npm:^5.61.0"
     "@vitejs/plugin-react": "npm:^4.0.3"
@@ -3449,8 +3421,6 @@ __metadata:
     eslint: "npm:^8.44.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.1"
-    react: "npm:^19.2.0"
-    react-dom: "npm:^19.2.0"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.0.2"
     vite: "npm:^4.4.2"
@@ -4123,16 +4093,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "microfrontend2@workspace:packages/microfrontend2"
   dependencies:
-    "@types/react": "npm:^18.2.14"
-    "@types/react-dom": "npm:^18.2.6"
     "@typescript-eslint/eslint-plugin": "npm:^5.61.0"
     "@typescript-eslint/parser": "npm:^5.61.0"
     "@vitejs/plugin-react": "npm:^4.0.3"
     eslint: "npm:^8.44.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.1"
-    react: "npm:^19.2.0"
-    react-dom: "npm:^19.2.0"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.0.2"
     vite: "npm:^4.4.2"
@@ -4145,8 +4111,6 @@ __metadata:
   resolution: "microfrontend@workspace:packages/microfrontend"
   dependencies:
     "@ant-design/icons": "npm:^6.1.0"
-    "@types/react": "npm:^18.2.14"
-    "@types/react-dom": "npm:^18.2.6"
     "@typescript-eslint/eslint-plugin": "npm:^5.61.0"
     "@typescript-eslint/parser": "npm:^5.61.0"
     "@vitejs/plugin-react": "npm:^4.0.3"
@@ -4154,8 +4118,6 @@ __metadata:
     eslint: "npm:^8.44.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.1"
-    react: "npm:^19.2.0"
-    react-dom: "npm:^19.2.0"
     single-spa-react: "npm:^5.0.2"
     typescript: "npm:^5.0.2"
     vite: "npm:^4.4.2"
@@ -5313,6 +5275,8 @@ __metadata:
     jiti: "npm:^2.6.1"
     knip: "npm:^5.0.0"
     prettier: "npm:^3.6.2"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     typescript-eslint: "npm:^8.46.2"
   languageName: unknown
   linkType: soft
