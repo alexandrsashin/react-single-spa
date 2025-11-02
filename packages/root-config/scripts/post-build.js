@@ -33,3 +33,10 @@ if (fs.existsSync(htmlSrc)) {
   fs.copyFileSync(htmlSrc, path.join(distDir, "index.html"));
   console.error("✅ Copied index.html to dist");
 }
+
+// Copy favicon.svg if it exists
+const faviconSrc = path.join(packageDir, "favicon.svg");
+if (fs.existsSync(faviconSrc)) {
+  fs.copyFileSync(faviconSrc, path.join(distDir, "favicon.svg"));
+  console.error("✅ Copied favicon.svg to dist");
+}

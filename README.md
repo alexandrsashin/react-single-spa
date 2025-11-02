@@ -58,7 +58,7 @@ yarn workspace @react-single-spa/microfrontend2 dev
 
 ## 🌐 Ports and URLs
 
-- **Root Config**: http://localhost:3005/
+- **Root Config**: http://localhost:3000/
 - **Microfrontend 1**: port defined in package
 - **Microfrontend 2**: port defined in package
 

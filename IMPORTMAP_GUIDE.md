@@ -31,7 +31,7 @@
 # Запуск dev серверов (importmap генерируется автоматически)
 yarn dev
 
-# Доступно на http://localhost:3005
+# Доступно на http://localhost:3000
 # Автоматически загружает development importmap или fallback
 ```
 
@@ -78,7 +78,7 @@ yarn workspace microfrontend2 dev
 
 ### Development
 
-- Использует локальные dev серверы (`localhost:3005-3007`)
+- Использует локальные dev серверы (`localhost:3000-3007`)
 - Загружает модули от JSPM CDN для быстрой разработки
 - Поддерживает HMR (Hot Module Replacement)
 
@@ -95,7 +95,7 @@ yarn workspace microfrontend2 dev
 ```json
 {
   "imports": {
-    "root-config": "http://localhost:3005/src/main.ts",
+    "root-config": "http://localhost:3000/src/main.ts",
     "@react-single-spa/microfrontend": "http://localhost:3006/src/main.ts",
     "react": "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
     "antd": "https://ga.jspm.io/npm:antd@5.21.4/es/index.js"
@@ -136,7 +136,7 @@ YOUR_LIBRARY_CDN=https://unpkg.com/your-library@1.0.0/dist/index.min.js
 
 Добавьте параметр в URL:
 
-- `http://localhost:3005?env=production` - принудительный production режим
+- `http://localhost:3000?env=production` - принудительный production режим
 - `https://your-domain.com?env=development` - принудительный development режим
 
 ## 🚨 Troubleshooting

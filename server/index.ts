@@ -87,7 +87,7 @@ if (fs.existsSync(rootConfigDist)) {
   });
 }
 
-const port = process.env.PORT ? Number(process.env.PORT) : 3005;
+const port = process.env.PORT ? Number(process.env.PORT) : 3000;
 try {
   await app.listen({ port, host: "0.0.0.0" });
   app.log.info("Server listening on http://0.0.0.0:%d", port);

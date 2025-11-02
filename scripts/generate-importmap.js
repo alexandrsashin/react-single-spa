@@ -36,7 +36,7 @@ function generateProductionImportMap() {
   const config = {
     development: {
       imports: {
-        "root-config": "http://localhost:3005/src/main.ts",
+        "root-config": "http://localhost:3000/src/main.ts",
         "@react-single-spa/header": "http://localhost:3008/src/main.ts",
         "@react-single-spa/microfrontend": "http://localhost:3006/src/main.ts",
         "@react-single-spa/microfrontend2": "http://localhost:3007/src/main.ts",
