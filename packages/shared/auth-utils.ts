@@ -14,7 +14,7 @@ interface User {
   roles?: string[];
 }
 
-export const AUTH_EVENTS = {
+const AUTH_EVENTS = {
   AUTH_STATE_CHANGED: "auth:state-changed",
   AUTH_LOGIN_SUCCESS: "auth:login-success",
   AUTH_LOGOUT: "auth:logout",

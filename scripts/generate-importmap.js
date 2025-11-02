@@ -7,7 +7,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
+import dotenv from "@dotenvx/dotenvx";
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
