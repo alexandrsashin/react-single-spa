@@ -7,27 +7,27 @@
     <title>Root Config</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Environment detection and importmap loader -->
+    <!-- React Refresh Setup (development only) -->
     <script src="/importmap-loader.js"></script>
 
     <!-- This script is required for react-refresh to work properly -->
     <script>
-      const origins = ["http://localhost:3006", "http://localhost:3007", "http://localhost:3008"];
+      (async function () {
+        const host = window.location.hostname;
+        const isDev = host === "localhost" || host === "127.0.0.1";
 
-      function appendReactRefreshScript(origin) {
-        const reactRefreshInteropabilityScript = document.createElement("script");
-        reactRefreshInteropabilityScript.type = "module";
-        reactRefreshInteropabilityScript.textContent = `
-    import RefreshRuntime from '${origin}/@react-refresh';
-    RefreshRuntime.injectIntoGlobalHook(window);
-  `;
-        document.head.appendChild(reactRefreshInteropabilityScript);
-      }
+        if (!isDev) return;
 
-      window.$RefreshReg$ = () => {};
-      window.$RefreshSig$ = () => (type) => type;
-      window.__vite_plugin_react_preamble_installed__ = true;
-
+        try {
+          const { setupReactRefresh } = await import("/react-refresh-setup.js");
+          setupReactRefresh();
+        } catch (error) {
+          // Не ломаем загрузку приложения из-за несущественной ошибки
+          // (например, модуль недоступен). Логируем для отладки.
+          // eslint-disable-next-line no-console
+          console.warn("[react-refresh] failed to load:", err);
+        }
+      })();
       // Only setup React Refresh in development
       if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
         origins.forEach((origin) => {

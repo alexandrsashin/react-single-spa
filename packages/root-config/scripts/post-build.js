@@ -27,6 +27,15 @@ if (fs.existsSync(loaderSrc)) {
   console.warn("⚠️  importmap-loader.js not found at", loaderSrc);
 }
 
+// Copy react-refresh-setup.js (optional, useful for preview)
+const refreshSrc = path.join(packageDir, "react-refresh-setup.js");
+if (fs.existsSync(refreshSrc)) {
+  fs.copyFileSync(refreshSrc, path.join(distDir, "react-refresh-setup.js"));
+  console.error("✅ Copied react-refresh-setup.js to dist");
+} else {
+  console.warn("⚠️  react-refresh-setup.js not found at", refreshSrc);
+}
+
 // Copy index.html if it exists
 const htmlSrc = path.join(packageDir, "index.html");
 if (fs.existsSync(htmlSrc)) {
