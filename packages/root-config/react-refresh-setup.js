@@ -11,7 +11,12 @@ function setupReactRefresh() {
     return;
   }
 
-  const devServers = ["http://localhost:3006", "http://localhost:3007", "http://localhost:3008"];
+  const devServers = [
+    "http://localhost:3006",
+    "http://localhost:3007",
+    "http://localhost:3008",
+    "http://localhost:3009",
+  ];
 
   // Setup React Refresh global variables
   window.$RefreshReg$ = () => {};

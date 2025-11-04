@@ -3055,6 +3055,7 @@ __metadata:
     "@types/react": "npm:^19.2.2"
     "@types/react-dom": "npm:^19.2.2"
     antd: "npm:^5.28.0"
+    single-spa: "npm:^6.0.0"
     single-spa-react: "npm:^6.0.2"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"
@@ -3897,6 +3898,18 @@ __metadata:
   checksum: 10c0/62e9ea70c7a3eb91d162d2c706b6606c041e4e7b547cbbb48f8b3695af457dd6479904d7ace600856bf923dd8d1ed0696f06195c8c20f02ac87c1da0e1d315ef
   languageName: node
   linkType: hard
+
+"notification-bell@workspace:packages/notification-bell":
+  version: 0.0.0-use.local
+  resolution: "notification-bell@workspace:packages/notification-bell"
+  peerDependencies:
+    "@ant-design/icons": "*"
+    antd: "*"
+    react: "*"
+    react-dom: "*"
+    single-spa-react: "*"
+  languageName: unknown
+  linkType: soft
 
 "npm-run-path@npm:^4.0.1":
   version: 4.0.1
@@ -5267,7 +5280,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"single-spa@npm:^6.0.0-beta.1, single-spa@npm:^6.0.3":
+"single-spa@npm:^6.0.0, single-spa@npm:^6.0.0-beta.1, single-spa@npm:^6.0.3":
   version: 6.0.3
   resolution: "single-spa@npm:6.0.3"
   checksum: 10c0/11e2419d54456831d6e745397ab632d65d3d6d82e1480f0732ac1c2989cfa7acf8ffcbb90f6a78efba2510ab6db99880ca82bb4d4f207b03f82a863e0a32f442

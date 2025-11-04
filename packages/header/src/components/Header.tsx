@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Layout, Space, Avatar, Dropdown, Typography, Button } from "antd";
 import { UserOutlined, LogoutOutlined, SettingOutlined } from "@ant-design/icons";
-import NotificationBell from "./NotificationBell";
+import { mountRootParcel } from "single-spa";
 import { type User } from "../types";
 
 const { Header: AntHeader } = Layout;
@@ -10,6 +10,8 @@ const { Text } = Typography;
 const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const parcelElRef = useRef<HTMLDivElement | null>(null);
+  const parcelRef = useRef<{ unmount?: () => void } | null>(null);
 
   useEffect(() => {
     // Получаем состояние авторизации из глобального AuthService
@@ -32,6 +34,30 @@ const Header: React.FC = () => {
 
     return unsubscribe;
   }, []);
+
+  // Mount notification parcel (ESM dynamic import)
+  useEffect(() => {
+    let canceled = false;
+
+    (async () => {
+      try {
+        const parcelModule = await import("notification-bell/parcel");
+        if (canceled) return;
+        parcelRef.current = mountRootParcel(parcelModule as any, {
+          domElement: parcelElRef.current!,
+          userId: user?.id,
+        });
+      } catch (err) {
+        // only console.error (allowed by lint)
+        console.error("Failed to load notification parcel", err);
+      }
+    })();
+
+    return () => {
+      canceled = true;
+      parcelRef.current?.unmount?.();
+    };
+  }, [user?.id]);
 
   const handleLogout = () => {
     if (window.NavigationUtils) {
@@ -92,7 +118,7 @@ const Header: React.FC = () => {
       {isAuthenticated && user ? (
         <Space size="large">
           {/* Parcel с нотификациями */}
-          <NotificationBell userId={user.id} />
+          <div ref={parcelElRef} />
 
           {/* Информация о пользователе */}
           <Dropdown menu={{ items: userMenuItems }} trigger={["click"]} placement="bottomRight">

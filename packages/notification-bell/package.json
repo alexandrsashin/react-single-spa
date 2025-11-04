@@ -1,0 +1,37 @@
+{
+  "name": "notification-bell",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./main": {
+      "import": "./dist/main.js",
+      "types": "./dist/main.d.ts"
+    },
+    "./parcel": {
+      "import": "./dist/parcel.js",
+      "types": "./dist/parcel.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "@ant-design/icons": "*",
+    "antd": "*",
+    "react": "*",
+    "react-dom": "*",
+    "single-spa-react": "*"
+  }
+}

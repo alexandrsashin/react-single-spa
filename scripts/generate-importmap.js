@@ -31,6 +31,7 @@ function generateProductionImportMap() {
   const headerVersion = readPackageVersion("header");
   const microfrontendVersion = readPackageVersion("microfrontend");
   const microfrontend2Version = readPackageVersion("microfrontend2");
+  const notificationBellVersion = readPackageVersion("notification-bell");
   const rootConfigVersion = readPackageVersion("root-config");
 
   const config = {
@@ -40,6 +41,7 @@ function generateProductionImportMap() {
         "@react-single-spa/header": "http://localhost:3008/src/main.ts",
         "@react-single-spa/microfrontend": "http://localhost:3006/src/main.ts",
         "@react-single-spa/microfrontend2": "http://localhost:3007/src/main.ts",
+        "@react-single-spa/notification-bell": "http://localhost:3009/src/main.ts",
         react: "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
         "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
         "react-dom/client": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.client.js",
@@ -65,6 +67,9 @@ function generateProductionImportMap() {
           process.env.MICROFRONTEND_URL || `/dist/microfrontend-${microfrontendVersion}.js`,
         "@react-single-spa/microfrontend2":
           process.env.MICROFRONTEND2_URL || `/dist/microfrontend2-${microfrontend2Version}.js`,
+        "@react-single-spa/notification-bell":
+          process.env.NOTIFICATION_BELL_URL ||
+          `/dist/notification-bell-${notificationBellVersion}.js`,
         react: process.env.REACT_CDN || "https://unpkg.com/react@19.2.0/index.js",
         "react-dom": process.env.REACT_DOM_CDN || "https://unpkg.com/react-dom@19.2.0/index.js",
         "react-dom/client":

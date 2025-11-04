@@ -21,9 +21,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [visible, setVisible] = useState(false);
 
-  // Симуляция получения нотификаций
   useEffect(() => {
-    // Начальные нотификации
     const initialNotifications: Notification[] = [
       {
         id: "1",
@@ -37,7 +35,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
         id: "2",
         title: "Системное уведомление",
         message: "Обновление системы запланировано на завтра в 02:00",
-        timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 минут назад
+        timestamp: new Date(Date.now() - 30 * 60 * 1000),
         read: false,
         type: "info",
       },
@@ -45,7 +43,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
         id: "3",
         title: "Важное уведомление",
         message: "Не забудьте сохранить ваши изменения",
-        timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 час назад
+        timestamp: new Date(Date.now() - 60 * 60 * 1000),
         read: true,
         type: "warning",
       },
@@ -53,7 +51,6 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
 
     setNotifications(initialNotifications);
 
-    // Симуляция периодических уведомлений
     const interval = setInterval(() => {
       const newNotification: Notification = {
         id: Date.now().toString(),
@@ -64,8 +61,8 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ userId }) => {
         type: Math.random() > 0.5 ? "info" : "success",
       };
 
-      setNotifications((prev) => [newNotification, ...prev].slice(0, 10)); // Максимум 10 уведомлений
-    }, 30000); // Каждые 30 секунд
+      setNotifications((prev) => [newNotification, ...prev].slice(0, 10));
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [userId]);

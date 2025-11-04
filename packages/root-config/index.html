@@ -28,12 +28,6 @@
           console.warn("[react-refresh] failed to load:", err);
         }
       })();
-      // Only setup React Refresh in development
-      if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-        origins.forEach((origin) => {
-          appendReactRefreshScript(origin);
-        });
-      }
     </script>
 
     <!-- Dynamic importmap loading -->
