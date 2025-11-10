@@ -49,19 +49,14 @@ class NavigationService {
 
   // Проверка доступности маршрута для текущего пользователя
   canAccessRoute(route: string): boolean {
-    const isAuthenticated = authService.isAuthenticated();
-
-    // Маршрут /login доступен всем
     if (route.startsWith("/login")) {
       return true;
     }
 
-    // Маршрут /user доступен только авторизованным
     if (route.startsWith("/user")) {
-      return isAuthenticated;
+      return authService.isAuthenticated();
     }
 
-    // Остальные маршруты доступны всем
     return true;
   }
 
