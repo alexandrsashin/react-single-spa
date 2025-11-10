@@ -1,8 +1,6 @@
-// Утилиты для навигации между микрофронтендами
+import { authService } from "./AuthService";
 
-import { authService } from "./auth/AuthService";
-
-class NavigationUtils {
+class NavigationService {
   // Навигация на страницу логина
   goToLogin(): void {
     window.history.pushState(null, "", "/login");
@@ -84,6 +82,4 @@ class NavigationUtils {
 }
 
 // Export instance for sharedState usage
-export const navigationUtils = new NavigationUtils();
-
-export type NavigationUtilsAPI = typeof navigationUtils;
+export const navigationService = new NavigationService();

@@ -48,31 +48,31 @@ const unsubscribe = window.authService.subscribe((authState) => {
 });
 ```
 
-### NavigationUtils
+### NavigationService
 
-Глобально доступен как `window.NavigationUtils`
+Глобально доступен как `window.NavigationService`
 
 ```typescript
 // Навигация на страницу логина
-window.NavigationUtils.goToLogin();
+window.NavigationService.goToLogin();
 
 // Навигация на пользовательскую страницу
-window.NavigationUtils.goToUser();
+window.NavigationService.goToUser();
 
 // Навигация на главную (с автоматическим редиректом)
-window.NavigationUtils.goToHome();
+window.NavigationService.goToHome();
 
 // Выход с редиректом
-window.NavigationUtils.logout();
+window.NavigationService.logout();
 
 // Безопасная навигация с проверкой доступа
-window.NavigationUtils.navigateTo("/user");
+window.NavigationService.navigateTo("/user");
 
 // Проверка доступности маршрута
-const canAccess = window.NavigationUtils.canAccessRoute("/user");
+const canAccess = window.NavigationService.canAccessRoute("/user");
 
 // Получение текущего маршрута
-const route = window.NavigationUtils.getCurrentRoute();
+const route = window.NavigationService.getCurrentRoute();
 ```
 
 ### RedirectService
@@ -114,7 +114,7 @@ const MyComponent = () => {
   };
 
   const handleLogout = () => {
-    window.NavigationUtils.logout();
+    window.NavigationService.logout();
   };
 
   return (
@@ -140,7 +140,7 @@ const MyComponent = () => {
 
 1. **AuthService** - управление состоянием авторизации
 2. **RedirectService** - автоматические редиректы на основе состояния авторизации
-3. **NavigationUtils** - утилиты для программной навигации
+3. **NavigationService** - утилиты для программной навигации
 4. **microfrontend-layout.ts** - определение маршрутов для single-spa-layout
 
 Все сервисы автоматически инициализируются при загрузке root-config и доступны глобально для использования в микрофронтендах.

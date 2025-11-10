@@ -1,4 +1,4 @@
-interface NavigationUtils {
+interface NavigationService {
   goToLogin(): void;
   goToUser(): void;
   goToHome(): void;
@@ -14,7 +14,7 @@ interface NavigationUtils {
 
 declare global {
   interface Window {
-    NavigationUtils: NavigationUtils;
+    NavigationService: NavigationService;
   }
 }
 

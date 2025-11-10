@@ -7,7 +7,7 @@ import {
 import { microfrontendLayout } from "./microfrontend-layout";
 import { authService } from "./auth/AuthService";
 import { redirectService } from "./auth/RedirectService";
-import { navigationUtils } from "./navigation-utils";
+import { navigationService } from "./auth/NavigationService";
 
 // Ensure module is loaded for its side-effects (do not add to sharedState per config)
 void redirectService;
@@ -34,7 +34,7 @@ applications.forEach((app) => {
     customProps: {
       sharedState: {
         authService,
-        navigationUtils,
+        navigationService,
       },
     },
   };

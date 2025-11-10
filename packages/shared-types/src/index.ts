@@ -63,6 +63,6 @@ export interface NavigationUtilsAPI {
 export type SharedCustomProps = {
   sharedState: {
     authService: AuthService;
-    navigationUtils?: NavigationUtilsAPI;
+    navigationService?: NavigationUtilsAPI;
   };
 };

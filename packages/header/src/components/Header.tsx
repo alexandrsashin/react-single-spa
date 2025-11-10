@@ -80,7 +80,7 @@ const Header = ({ customProps }: HeaderProps) => {
   // }, [user?.id, customProps]);
 
   const handleLogout = () => {
-    const nav = customProps?.sharedState?.navigationUtils;
+    const nav = customProps?.sharedState?.navigationService;
     if (nav && typeof nav.logout === "function") {
       nav.logout();
     }

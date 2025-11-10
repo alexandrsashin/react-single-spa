@@ -12,7 +12,7 @@
 
 1. **AuthService** - управление состоянием авторизации (уже был)
 2. **RedirectService** - новый сервис для автоматических редиректов
-3. **NavigationUtils** - утилиты для программной навигации
+3. **NavigationService** - утилиты для программной навигации
 
 ### 📋 **Логика редиректов**
 
@@ -37,10 +37,10 @@ window.authService.login(credentials);
 window.authService.logout();
 
 // Навигация
-window.NavigationUtils.goToLogin();
-window.NavigationUtils.goToUser();
-window.NavigationUtils.logout();
-window.NavigationUtils.navigateTo("/path");
+window.NavigationService.goToLogin();
+window.NavigationService.goToUser();
+window.NavigationService.logout();
+window.NavigationService.navigateTo("/path");
 ```
 
 ### 📁 **Структура файлов**
