@@ -27,6 +27,7 @@
       "@react-single-spa/header": "/dist/header-0.0.1.js",
       "@react-single-spa/microfrontend": "/dist/microfrontend-0.0.1.js",
       "@react-single-spa/microfrontend2": "/dist/microfrontend2-0.0.1.js",
+      "@react-single-spa/notification-bell": "/dist/notification-bell-0.0.1.js",
       "react": "https://unpkg.com/react@19.2.0",
       "react-dom": "https://unpkg.com/react-dom@19.2.0",
       "react-dom/client": "https://unpkg.com/react-dom@19.2.0/client.js",

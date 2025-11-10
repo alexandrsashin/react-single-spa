@@ -16,7 +16,7 @@ class AuthService {
     TOKEN_EXPIRY: "auth_token_expiry",
   };
 
-  private tokenRefreshTimer: number | null = null;
+  private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.initializeFromStorage();
