@@ -4,13 +4,13 @@ import { authService } from "./auth/AuthService";
 
 class NavigationUtils {
   // Навигация на страницу логина
-  static goToLogin(): void {
+  goToLogin(): void {
     window.history.pushState(null, "", "/login");
     window.dispatchEvent(new PopStateEvent("popstate"));
   }
 
   // Навигация на пользовательскую страницу (только для авторизованных)
-  static goToUser(): void {
+  goToUser(): void {
     if (authService.isAuthenticated()) {
       window.history.pushState(null, "", "/user");
       window.dispatchEvent(new PopStateEvent("popstate"));
@@ -20,19 +20,19 @@ class NavigationUtils {
   }
 
   // Навигация на главную страницу (с автоматическим редиректом)
-  static goToHome(): void {
+  goToHome(): void {
     window.history.pushState(null, "", "/");
     window.dispatchEvent(new PopStateEvent("popstate"));
   }
 
   // Выход из системы с редиректом на главную страницу
-  static logout(): void {
+  logout(): void {
     authService.logout();
     this.goToHome(); // Перенаправляем на /, который автоматически редиректит на /login
   }
 
   // Получение текущего маршрута
-  static getCurrentRoute(): {
+  getCurrentRoute(): {
     pathname: string;
     search: string;
     hash: string;
@@ -45,12 +45,12 @@ class NavigationUtils {
   }
 
   // Проверка, находится ли пользователь на определенном маршруте
-  static isOnRoute(route: string): boolean {
+  isOnRoute(route: string): boolean {
     return window.location.pathname.startsWith(route);
   }
 
   // Проверка доступности маршрута для текущего пользователя
-  static canAccessRoute(route: string): boolean {
+  canAccessRoute(route: string): boolean {
     const isAuthenticated = authService.isAuthenticated();
 
     // Маршрут /login доступен всем
@@ -68,7 +68,7 @@ class NavigationUtils {
   }
 
   // Безопасная навигация с проверкой доступа
-  static navigateTo(route: string): void {
+  navigateTo(route: string): void {
     if (this.canAccessRoute(route)) {
       window.history.pushState(null, "", route);
       window.dispatchEvent(new PopStateEvent("popstate"));
@@ -83,11 +83,7 @@ class NavigationUtils {
   }
 }
 
-// Экспортируем для глобального использования
-declare global {
-  interface Window {
-    NavigationUtils: typeof NavigationUtils;
-  }
-}
+// Export instance for sharedState usage
+export const navigationUtils = new NavigationUtils();
 
-window.NavigationUtils = NavigationUtils;
+export type NavigationUtilsAPI = typeof navigationUtils;

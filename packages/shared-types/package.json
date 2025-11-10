@@ -1,0 +1,14 @@
+{
+  "name": "@react-single-spa/shared-types",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "index.js",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./index.js"
+    }
+  },
+  "license": "MIT"
+}

@@ -5,7 +5,8 @@
 
 function setupReactRefresh() {
   const isDev =
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
 
   if (!isDev) {
     return;
@@ -15,7 +16,6 @@ function setupReactRefresh() {
     "http://localhost:3006",
     "http://localhost:3007",
     "http://localhost:3008",
-    "http://localhost:3009",
   ];
 
   // Setup React Refresh global variables

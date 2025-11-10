@@ -1,8 +1,10 @@
-import React from "react";
 import { ConfigProvider } from "antd";
 import LoginPage from "./LoginPage";
+import { type SharedCustomProps } from "@react-single-spa/shared-types";
 
-const App: React.FC = () => {
+type AppProps = SharedCustomProps;
+
+const App = (props: AppProps) => {
   return (
     <ConfigProvider
       theme={{
@@ -11,7 +13,7 @@ const App: React.FC = () => {
         },
       }}
     >
-      <LoginPage />
+      <LoginPage customProps={props} />
     </ConfigProvider>
   );
 };

@@ -3,50 +3,59 @@ import { AuthState, getAuthService, hasPermission } from "./auth-utils";
 
 // Hook для работы с авторизацией
 export function useAuth() {
-  const [authState, setAuthState] = useState<AuthState>(() => {
-    const authService = getAuthService();
-    return (
-      authService?.getState() || {
-        isAuthenticated: false,
-        user: null,
-        accessToken: null,
-        refreshToken: null,
-        tokenExpiry: null,
-      }
-    );
+  const [authState, setAuthState] = useState<AuthState>({
+    isAuthenticated: false,
+    user: null,
+    accessToken: null,
+    refreshToken: null,
+    tokenExpiry: null,
   });
 
   useEffect(() => {
-    const authService = getAuthService();
-    if (!authService) return;
+    let mounted = true;
 
-    // Инициализируем состояние
-    setAuthState(authService.getState());
+    (async () => {
+      const authService = await getAuthService();
+      if (!mounted || !authService) return;
 
-    // Подписываемся на изменения
-    const unsubscribe = authService.subscribe((newState) => {
-      setAuthState(newState);
-    });
+      // Initialize state
+      setAuthState(authService.getState());
 
-    return unsubscribe;
+      // Subscribe for updates
+      const unsubscribe = authService.subscribe((newState) => {
+        setAuthState(newState);
+      });
+
+      // cleanup
+      return () => {
+        unsubscribe();
+      };
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  const login = useCallback(async (credentials: { email: string; password: string }) => {
-    const authService = getAuthService();
-    if (authService) {
-      await authService.login(credentials);
-    }
-  }, []);
+  const login = useCallback(
+    async (credentials: { email: string; password: string }) => {
+      const authService = await getAuthService();
+      if (authService) {
+        await authService.login(credentials);
+      }
+    },
+    []
+  );
 
-  const logout = useCallback(() => {
-    const authService = getAuthService();
+  const logout = useCallback(async () => {
+    const authService = await getAuthService();
     if (authService) {
       authService.logout();
     }
   }, []);
 
   const getValidToken = useCallback(async () => {
-    const authService = getAuthService();
+    const authService = await getAuthService();
     if (authService) {
       return await authService.getValidAccessToken();
     }
@@ -100,7 +109,9 @@ export function UserInfo(): JSX.Element {
     <div>
       <p>Welcome, {user.name}!</p>
       <p>Email: {user.email}</p>
-      {user.roles && user.roles.length > 0 && <p>Roles: {user.roles.join(", ")}</p>}
+      {user.roles && user.roles.length > 0 && (
+        <p>Roles: {user.roles.join(", ")}</p>
+      )}
     </div>
   );
 }
@@ -111,7 +122,10 @@ interface LogoutButtonProps {
   onLogout?: () => void;
 }
 
-export function LogoutButton({ children = "Logout", onLogout }: LogoutButtonProps): JSX.Element {
+export function LogoutButton({
+  children = "Logout",
+  onLogout,
+}: LogoutButtonProps): JSX.Element {
   const { logout } = useAuth();
 
   const handleLogout = () => {

@@ -1,23 +1,36 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layout, Space, Avatar, Dropdown, Typography, Button } from "antd";
-import { UserOutlined, LogoutOutlined, SettingOutlined } from "@ant-design/icons";
-import { mountRootParcel } from "single-spa";
-import { type User } from "../types";
+import {
+  UserOutlined,
+  LogoutOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+// import { mountRootParcel } from "single-spa";
+import {
+  type User,
+  type AuthState,
+  type SharedCustomProps,
+} from "@react-single-spa/shared-types";
 
 const { Header: AntHeader } = Layout;
 const { Text } = Typography;
 
-const Header: React.FC = () => {
+type HeaderProps = {
+  customProps?: SharedCustomProps;
+};
+
+const Header = ({ customProps }: HeaderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const parcelElRef = useRef<HTMLDivElement | null>(null);
-  const parcelRef = useRef<{ unmount?: () => void } | null>(null);
+  // const parcelElRef = useRef<HTMLDivElement | null>(null);
+  // const parcelRef = useRef<{ unmount?: () => void } | null>(null);
 
   useEffect(() => {
     // Получаем состояние авторизации из глобального AuthService
     const checkAuthState = () => {
-      if (window.authService) {
-        const authState = window.authService.getState();
+      const authService = customProps?.sharedState?.authService;
+      if (authService) {
+        const authState = authService.getState();
         setIsAuthenticated(authState.isAuthenticated);
         setUser(authState.user);
       }
@@ -27,46 +40,54 @@ const Header: React.FC = () => {
     checkAuthState();
 
     // Подписываемся на изменения авторизации
-    const unsubscribe = window.authService?.subscribe((authState) => {
-      setIsAuthenticated(authState.isAuthenticated);
-      setUser(authState.user);
-    });
+    const authService = customProps?.sharedState?.authService;
+    if (authService && typeof authService.subscribe === "function") {
+      const unsubscribe = authService.subscribe((authState: AuthState) => {
+        setIsAuthenticated(authState.isAuthenticated);
+        setUser(authState.user);
+      });
 
-    return unsubscribe;
-  }, []);
+      return unsubscribe;
+    }
 
-  // Mount notification parcel (ESM dynamic import)
-  useEffect(() => {
-    let canceled = false;
+    // If no authService is provided, return a no-op cleanup
+    return () => {};
+  }, [customProps]);
 
-    (async () => {
-      try {
-        const parcelModule = await import("notification-bell/parcel");
-        if (canceled) return;
-        parcelRef.current = mountRootParcel(parcelModule as any, {
-          domElement: parcelElRef.current!,
-          userId: user?.id,
-        });
-      } catch (err) {
-        // only console.error (allowed by lint)
-        console.error("Failed to load notification parcel", err);
-      }
-    })();
+  // // Mount notification parcel (ESM dynamic import)
+  // useEffect(() => {
+  //   let canceled = false;
 
-    return () => {
-      canceled = true;
-      parcelRef.current?.unmount?.();
-    };
-  }, [user?.id]);
+  //   (async () => {
+  //     try {
+  //       const parcelModule = await import("notification-bell/parcel");
+  //       if (canceled) return;
+  //       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //       parcelRef.current = mountRootParcel(parcelModule as any, {
+  //         domElement: parcelElRef.current!,
+  //         userId: user?.id,
+  //       });
+  //     } catch (err) {
+  //       // only console.error (allowed by lint)
+  //       console.error("Failed to load notification parcel", err);
+  //     }
+  //   })();
+
+  //   return () => {
+  //     canceled = true;
+  //     parcelRef.current?.unmount?.();
+  //   };
+  // }, [user?.id, customProps]);
 
   const handleLogout = () => {
-    if (window.NavigationUtils) {
-      window.NavigationUtils.logout();
+    const nav = customProps?.sharedState?.navigationUtils;
+    if (nav && typeof nav.logout === "function") {
+      nav.logout();
     }
   };
 
   const handleSettings = () => {
-    console.log("Открыть настройки");
+    console.warn("Открыть настройки");
   };
 
   const userMenuItems = [
@@ -118,10 +139,14 @@ const Header: React.FC = () => {
       {isAuthenticated && user ? (
         <Space size="large">
           {/* Parcel с нотификациями */}
-          <div ref={parcelElRef} />
+          {/* <div ref={parcelElRef} /> */}
 
           {/* Информация о пользователе */}
-          <Dropdown menu={{ items: userMenuItems }} trigger={["click"]} placement="bottomRight">
+          <Dropdown
+            menu={{ items: userMenuItems }}
+            trigger={["click"]}
+            placement="bottomRight"
+          >
             <Button
               type="text"
               style={{
@@ -132,7 +157,11 @@ const Header: React.FC = () => {
                 gap: "8px",
               }}
             >
-              <Avatar size="small" icon={<UserOutlined />} style={{ backgroundColor: "#1890ff" }} />
+              <Avatar
+                size="small"
+                icon={<UserOutlined />}
+                style={{ backgroundColor: "#1890ff" }}
+              />
               <Text strong>{user.name}</Text>
             </Button>
           </Dropdown>

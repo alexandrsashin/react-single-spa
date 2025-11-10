@@ -7,8 +7,16 @@ interface FetchConfig extends Omit<RequestInit, "headers"> {
 }
 
 // Расширенная версия fetch с автоматической авторизацией
-async function authFetch(url: string, options: FetchConfig = {}): Promise<Response> {
-  const { requireAuth = true, baseURL = "", headers = {}, ...fetchOptions } = options;
+async function authFetch(
+  url: string,
+  options: FetchConfig = {}
+): Promise<Response> {
+  const {
+    requireAuth = true,
+    baseURL = "",
+    headers = {},
+    ...fetchOptions
+  } = options;
 
   // Формируем полный URL
   const fullUrl = baseURL ? `${baseURL}${url}` : url;
@@ -38,9 +46,13 @@ async function authFetch(url: string, options: FetchConfig = {}): Promise<Respon
     console.warn("Unauthorized request, token may be expired");
 
     // Можно добавить автоматический логаут
-    if (typeof window !== "undefined" && window.authService) {
-      window.authService.logout();
-    }
+    try {
+      const { getAuthService } = await import("./auth-utils");
+      const authService = await getAuthService();
+      if (authService) {
+        authService.logout();
+      }
+    } catch {}
   }
 
   return response;

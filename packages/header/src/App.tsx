@@ -1,8 +1,11 @@
-import React from "react";
 import { ConfigProvider } from "antd";
 import Header from "./components/Header";
 
-const App: React.FC = () => {
+import { type SharedCustomProps } from "@react-single-spa/shared-types";
+
+type AppProps = SharedCustomProps;
+
+const App = (props: AppProps) => {
   return (
     <ConfigProvider
       theme={{
@@ -11,7 +14,7 @@ const App: React.FC = () => {
         },
       }}
     >
-      <Header />
+      <Header customProps={props} />
     </ConfigProvider>
   );
 };

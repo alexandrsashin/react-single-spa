@@ -13,7 +13,9 @@ class RedirectService {
 
     // Инициализируем редиректы после загрузки DOM
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => this.setupRedirects());
+      document.addEventListener("DOMContentLoaded", () =>
+        this.setupRedirects()
+      );
     } else {
       this.setupRedirects();
     }
@@ -136,14 +138,5 @@ class RedirectService {
   }
 }
 
-// Создаем singleton instance
-const redirectService = new RedirectService();
-
-// Экспортируем для использования в microfrontends
-declare global {
-  interface Window {
-    redirectService: RedirectService;
-  }
-}
-
-window.redirectService = redirectService;
+// Создаем и экспортируем singleton instance
+export const redirectService = new RedirectService();

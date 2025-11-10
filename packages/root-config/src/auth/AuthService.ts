@@ -27,13 +27,19 @@ class AuthService {
   private initializeFromStorage(): void {
     try {
       const accessToken = localStorage.getItem(this.STORAGE_KEYS.ACCESS_TOKEN);
-      const refreshToken = localStorage.getItem(this.STORAGE_KEYS.REFRESH_TOKEN);
+      const refreshToken = localStorage.getItem(
+        this.STORAGE_KEYS.REFRESH_TOKEN
+      );
       const userStr = localStorage.getItem(this.STORAGE_KEYS.USER);
-      const tokenExpiryStr = localStorage.getItem(this.STORAGE_KEYS.TOKEN_EXPIRY);
+      const tokenExpiryStr = localStorage.getItem(
+        this.STORAGE_KEYS.TOKEN_EXPIRY
+      );
 
       if (accessToken && userStr) {
         const user = JSON.parse(userStr) as User;
-        const tokenExpiry = tokenExpiryStr ? parseInt(tokenExpiryStr, 10) : null;
+        const tokenExpiry = tokenExpiryStr
+          ? parseInt(tokenExpiryStr, 10)
+          : null;
 
         // Проверяем, не истек ли токен
         if (tokenExpiry && Date.now() < tokenExpiry) {
@@ -76,7 +82,8 @@ class AuthService {
         user: response.user,
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Login failed";
+      const errorMessage =
+        error instanceof Error ? error.message : "Login failed";
       this.dispatchEvent(AUTH_EVENTS.AUTH_ERROR, { error: errorMessage });
       throw error;
     }
@@ -124,7 +131,8 @@ class AuthService {
       return response.accessToken;
     } catch (error) {
       this.logout();
-      const errorMessage = error instanceof Error ? error.message : "Token refresh failed";
+      const errorMessage =
+        error instanceof Error ? error.message : "Token refresh failed";
       this.dispatchEvent(AUTH_EVENTS.AUTH_ERROR, { error: errorMessage });
       return null;
     }
@@ -166,10 +174,16 @@ class AuthService {
       callback(event.detail.state);
     };
 
-    window.addEventListener(AUTH_EVENTS.AUTH_STATE_CHANGED, handleAuthChange as EventListener);
+    window.addEventListener(
+      AUTH_EVENTS.AUTH_STATE_CHANGED,
+      handleAuthChange as EventListener
+    );
 
     return () => {
-      window.removeEventListener(AUTH_EVENTS.AUTH_STATE_CHANGED, handleAuthChange as EventListener);
+      window.removeEventListener(
+        AUTH_EVENTS.AUTH_STATE_CHANGED,
+        handleAuthChange as EventListener
+      );
     };
   }
 
@@ -182,16 +196,28 @@ class AuthService {
   private saveToStorage(): void {
     try {
       if (this.state.accessToken) {
-        localStorage.setItem(this.STORAGE_KEYS.ACCESS_TOKEN, this.state.accessToken);
+        localStorage.setItem(
+          this.STORAGE_KEYS.ACCESS_TOKEN,
+          this.state.accessToken
+        );
       }
       if (this.state.refreshToken) {
-        localStorage.setItem(this.STORAGE_KEYS.REFRESH_TOKEN, this.state.refreshToken);
+        localStorage.setItem(
+          this.STORAGE_KEYS.REFRESH_TOKEN,
+          this.state.refreshToken
+        );
       }
       if (this.state.user) {
-        localStorage.setItem(this.STORAGE_KEYS.USER, JSON.stringify(this.state.user));
+        localStorage.setItem(
+          this.STORAGE_KEYS.USER,
+          JSON.stringify(this.state.user)
+        );
       }
       if (this.state.tokenExpiry) {
-        localStorage.setItem(this.STORAGE_KEYS.TOKEN_EXPIRY, this.state.tokenExpiry.toString());
+        localStorage.setItem(
+          this.STORAGE_KEYS.TOKEN_EXPIRY,
+          this.state.tokenExpiry.toString()
+        );
       }
     } catch (error) {
       console.error("Error saving auth state to storage:", error);
@@ -241,7 +267,10 @@ class AuthService {
     // Имитация API запроса
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    if (credentials.email === "test@example.com" && credentials.password === "password") {
+    if (
+      credentials.email === "test@example.com" &&
+      credentials.password === "password"
+    ) {
       const tokenExpiry = Date.now() + 60 * 60 * 1000; // 1 час
 
       return {
@@ -278,12 +307,3 @@ class AuthService {
 
 // Создаем singleton instance
 export const authService = new AuthService();
-
-// Экспортируем для использования в microfrontends
-declare global {
-  interface Window {
-    authService: AuthService;
-  }
-}
-
-window.authService = authService;

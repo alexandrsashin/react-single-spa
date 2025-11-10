@@ -1131,6 +1131,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-single-spa/shared-types@workspace:packages/shared-types":
+  version: 0.0.0-use.local
+  resolution: "@react-single-spa/shared-types@workspace:packages/shared-types"
+  languageName: unknown
+  linkType: soft
+
 "@rolldown/pluginutils@npm:1.0.0-beta.43":
   version: 1.0.0-beta.43
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.43"

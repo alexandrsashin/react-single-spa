@@ -25,24 +25,38 @@ interface AuthAPI {
 }
 
 // Получение AuthService из global scope (root-config)
-export function getAuthService(): AuthAPI | null {
-  if (typeof window !== "undefined" && window.authService) {
-    return window.authService;
+export async function getAuthService(): Promise<AuthAPI | null> {
+  // Try to use the singleton `authService` exported by the root-config package
+  // when available at runtime (preferred). Fall back to the global
+  // `window.authService` for environments where root-config isn't imported.
+  try {
+    // dynamic import to avoid ESM/CJS issues and keep this function async
+    const module: any = await import("../root-config/src/auth/AuthService");
+    // module should export `authService`
+    const rootAuthService = module?.authService;
+    if (rootAuthService) return rootAuthService as AuthAPI;
+  } catch {
+    // ignore and fall back to window
   }
 
-  console.warn("AuthService not available. Make sure root-config is loaded first.");
+  console.warn(
+    "AuthService not available. Make sure root-config is loaded first."
+  );
   return null;
 }
 
 // Утилита для проверки прав доступа
-export function hasPermission(user: User | null, permissions: string[]): boolean {
+export function hasPermission(
+  user: User | null,
+  permissions: string[]
+): boolean {
   if (!user?.roles) return false;
   return permissions.some((permission) => user.roles?.includes(permission));
 }
 
 // Получение актуального токена для API запросов
 export async function getAuthToken(): Promise<string | null> {
-  const authService = getAuthService();
+  const authService = await getAuthService();
   if (!authService) return null;
 
   return await authService.getValidAccessToken();

@@ -1,8 +1,18 @@
-import { useAuth, LogoutButton, UserInfo, ProtectedRoute } from "../../shared/auth-hooks";
+import { SharedCustomProps } from "@react-single-spa/shared-types";
+import {
+  useAuth,
+  LogoutButton,
+  UserInfo,
+  ProtectedRoute,
+} from "../../shared/auth-hooks";
 import { httpClient } from "../../shared/http-client-fixed";
 import { LoginForm } from "./components/LoginForm";
 
-function LoginPage() {
+type LoginPageProps = {
+  customProps?: SharedCustomProps;
+};
+
+const LoginPage = ({ customProps }: LoginPageProps) => {
   const { isAuthenticated } = useAuth();
 
   const testApiCall = async () => {
@@ -33,10 +43,13 @@ function LoginPage() {
 
   if (!isAuthenticated) {
     return (
-      <div style={{ padding: "20px", border: "2px solid #ccc", margin: "10px" }}>
+      <div
+        style={{ padding: "20px", border: "2px solid #ccc", margin: "10px" }}
+      >
         <h2>Microfrontend 1 - Login Required</h2>
         <p>Please log in to access this microfrontend.</p>
         <LoginForm
+          authService={customProps?.sharedState?.authService}
           onSuccess={() => console.log("Login successful!")}
           onError={(error: string) => console.error("Login error:", error)}
         />
@@ -45,7 +58,9 @@ function LoginPage() {
   }
 
   return (
-    <div style={{ padding: "20px", border: "2px solid #4CAF50", margin: "10px" }}>
+    <div
+      style={{ padding: "20px", border: "2px solid #4CAF50", margin: "10px" }}
+    >
       <h2>Microfrontend 1 - Authenticated</h2>
 
       <UserInfo />
@@ -67,10 +82,12 @@ function LoginPage() {
         <button onClick={handleTestApiCall} style={{ marginRight: "10px" }}>
           Test API Call
         </button>
-        <LogoutButton onLogout={() => console.log("Logged out from microfrontend 1")} />
+        <LogoutButton
+          onLogout={() => console.log("Logged out from microfrontend 1")}
+        />
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;
