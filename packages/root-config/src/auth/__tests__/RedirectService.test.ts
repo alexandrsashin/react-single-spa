@@ -86,7 +86,7 @@ afterEach(() => {
 
 describe("RedirectService", () => {
   it("redirects initial navigation from / to /user when authenticated", async () => {
-    const { redirectService, authMock } = await importWithMockedAuth(true);
+    const { redirectService } = await importWithMockedAuth(true);
 
     // initialization schedules a 100ms initial navigation check
     await vi.advanceTimersByTimeAsync(100);
@@ -100,7 +100,7 @@ describe("RedirectService", () => {
   });
 
   it("redirects to /login when authState becomes unauthenticated", async () => {
-    const { redirectService, authMock } = await importWithMockedAuth(true);
+    const { authMock } = await importWithMockedAuth(true);
 
     // finish initial navigation
     await vi.advanceTimersByTimeAsync(100);
