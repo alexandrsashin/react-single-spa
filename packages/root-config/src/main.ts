@@ -43,3 +43,66 @@ applications.forEach((app) => {
 });
 layoutEngine.activate();
 start();
+
+// --- Root-config 404 handling (render Antd Result for non-/login and non-/user routes) ---
+function ensureNotFoundContainer() {
+  let el = document.getElementById("root-config-not-found");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "root-config-not-found";
+    // keep it at the end of body so single-spa apps can render above it
+    Object.assign(el.style, {
+      position: "relative",
+      zIndex: "1000",
+    } as Partial<CSSStyleDeclaration>);
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function showNotFoundIfNeeded() {
+  const path = window.location.pathname || "/";
+  // track whether NotFound has been mounted to avoid unnecessary unmount/remount
+  // when switching between multiple non-existent routes
+  // (module-level flag below)
+  // Only show 404 for routes that are not /login and not /user
+  if (path !== "/login" && path !== "/user") {
+    const container = ensureNotFoundContainer();
+    // dynamic import so we don't bloat the initial bundle
+    import("./components/NotFound").then((mod) => {
+      // If component not mounted yet, mount it; otherwise update route to avoid remount
+      if (
+        !(window as unknown as { __rootConfigNotFoundMounted?: boolean })
+          .__rootConfigNotFoundMounted
+      ) {
+        mod.renderNotFound(container, path, () => {
+          mod.unmountNotFound();
+          (
+            window as unknown as { __rootConfigNotFoundMounted?: boolean }
+          ).__rootConfigNotFoundMounted = false;
+        });
+        (
+          window as unknown as { __rootConfigNotFoundMounted?: boolean }
+        ).__rootConfigNotFoundMounted = true;
+      } else if (typeof mod.updateNotFound === "function") {
+        mod.updateNotFound(path);
+      } else {
+        // fallback: re-render
+        mod.renderNotFound(container, path);
+      }
+    });
+  } else {
+    // if on allowed routes, ensure unmounted
+    import("./components/NotFound").then((mod) => {
+      if (typeof mod.unmountNotFound === "function") mod.unmountNotFound();
+      (
+        window as unknown as { __rootConfigNotFoundMounted?: boolean }
+      ).__rootConfigNotFoundMounted = false;
+    });
+  }
+}
+
+// watch navigation
+window.addEventListener("popstate", () => showNotFoundIfNeeded());
+// initial check
+showNotFoundIfNeeded();
