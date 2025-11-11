@@ -1,4 +1,4 @@
-import { getAuthToken } from "./auth-utils";
+import { getAuthToken, getAuthService } from "./auth-utils";
 
 interface FetchConfig extends Omit<RequestInit, "headers"> {
   requireAuth?: boolean;
@@ -47,7 +47,6 @@ async function authFetch(
 
     // Можно добавить автоматический логаут
     try {
-      const { getAuthService } = await import("./auth-utils");
       const authService = await getAuthService();
       if (authService) {
         authService.logout();
