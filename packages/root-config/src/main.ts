@@ -12,6 +12,19 @@ import { navigationService } from "./auth/NavigationService";
 // Ensure module is loaded for its side-effects (do not add to sharedState per config)
 void redirectService;
 
+// Inject minimal layout CSS so sidebar is left and other apps render to the right
+(function injectLayoutStyles() {
+  const style = document.createElement("style");
+  style.textContent = `
+    .root-layout { display: flex; min-height: 100vh; }
+    .left-col { width: 220px; flex: 0 0 220px; background: #ffffff; border-right: 1px solid #eee; }
+    .right-col { flex: 1 1 auto; min-height: 100vh; background: #f7f7f7; }
+    /* ensure apps rendered inside right-col take full width */
+    .right-col > * { width: 100%; }
+  `.trim();
+  document.head.appendChild(style);
+})();
+
 const routes = constructRoutes(microfrontendLayout);
 
 const applications = constructApplications({
@@ -35,6 +48,11 @@ applications.forEach((app) => {
       sharedState: {
         authService,
         navigationService,
+        menuConfig: [
+          { key: "/user", label: "Личный кабинет", roles: ["user"] },
+          { key: "/admin", label: "Админка", roles: ["admin"] },
+          { key: "/about", label: "О сайте" },
+        ],
       },
     },
   };
@@ -46,17 +64,28 @@ start();
 
 // --- Root-config 404 handling (render Antd Result for non-/login and non-/user routes) ---
 function ensureNotFoundContainer() {
+  // Prefer to mount the NotFound container inside the current .right-col so it
+  // appears together with the header and other right-side apps. Fall back to
+  // body if .right-col is not present yet.
   let el = document.getElementById("root-config-not-found");
   if (!el) {
     el = document.createElement("div");
     el.id = "root-config-not-found";
-    // keep it at the end of body so single-spa apps can render above it
     Object.assign(el.style, {
       position: "relative",
       zIndex: "1000",
+      padding: "16px",
     } as Partial<CSSStyleDeclaration>);
-    document.body.appendChild(el);
+
+    const rightCol = document.querySelector(".right-col");
+    if (rightCol && rightCol instanceof HTMLElement) {
+      rightCol.appendChild(el);
+    } else {
+      // If layout hasn't been rendered yet, append to body as fallback.
+      document.body.appendChild(el);
+    }
   }
+
   return el;
 }
 

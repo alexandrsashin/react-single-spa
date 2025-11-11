@@ -75,6 +75,7 @@
             "@react-single-spa/microfrontend2":
               "http://localhost:3007/src/main.ts",
             "@react-single-spa/header": "http://localhost:3008/src/main.ts",
+            "@react-single-spa/sidebar": "http://localhost:3010/src/main.ts",
             react: "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
             "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
             "react-dom/client":

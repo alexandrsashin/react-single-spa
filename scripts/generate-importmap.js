@@ -36,6 +36,7 @@ function generateProductionImportMap() {
   const microfrontend2Version = readPackageVersion("microfrontend2");
   const notificationBellVersion = readPackageVersion("notification-bell");
   const rootConfigVersion = readPackageVersion("root-config");
+  const sidebarVersion = readPackageVersion("sidebar");
 
   const config = {
     development: {
@@ -44,6 +45,7 @@ function generateProductionImportMap() {
         "@react-single-spa/header": "http://localhost:3008/src/main.ts",
         "@react-single-spa/microfrontend": "http://localhost:3006/src/main.ts",
         "@react-single-spa/microfrontend2": "http://localhost:3007/src/main.ts",
+        "@react-single-spa/sidebar": "http://localhost:3010/src/main.ts",
         react: "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
         "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
         "react-dom/client":
@@ -82,6 +84,8 @@ function generateProductionImportMap() {
         "@react-single-spa/notification-bell":
           process.env.NOTIFICATION_BELL_URL ||
           `/dist/notification-bell-${notificationBellVersion}.js`,
+        "@react-single-spa/sidebar":
+          process.env.SIDEBAR_URL || `/dist/sidebar-${sidebarVersion}.js`,
         react:
           process.env.REACT_CDN || "https://unpkg.com/react@19.2.0/index.js",
         "react-dom":

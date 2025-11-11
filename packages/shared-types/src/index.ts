@@ -60,9 +60,16 @@ export interface NavigationUtilsAPI {
   };
 }
 
+export interface MenuItemConfig {
+  key: string;
+  label: string;
+  roles?: string[]; // empty or omitted means public
+}
+
 export type SharedCustomProps = {
   sharedState: {
     authService: AuthService;
     navigationService?: NavigationUtilsAPI;
+    menuConfig?: MenuItemConfig[];
   };
 };
