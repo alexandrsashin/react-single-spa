@@ -49,8 +49,17 @@ class RedirectService {
 
     // Слушаем событие успешного логина
     window.addEventListener(AUTH_EVENTS.AUTH_LOGIN_SUCCESS, () => {
-      // После успешного логина перенаправляем на корень
-      this.redirectTo("/");
+      // Проверяем, есть ли параметр redirectTo
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get("redirectTo");
+
+      if (redirectTo && redirectTo !== "/login") {
+        // Перенаправляем на сохранённый путь
+        this.redirectTo(redirectTo);
+      } else {
+        // После успешного логина перенаправляем на /user по умолчанию
+        this.redirectTo("/user");
+      }
     });
   }
 
@@ -87,13 +96,21 @@ class RedirectService {
 
     // Если пользователь не авторизован и пытается попасть на защищённый маршрут (не публичный)
     if (!isAuthenticated && !isPublicRoute) {
-      this.redirectTo("/login");
+      this.redirectToLogin(currentPath);
       return;
     }
 
     // Если пользователь уже авторизован и находится на /login
     if (isAuthenticated && currentPath.startsWith("/login")) {
-      this.redirectTo("/user");
+      // Проверяем, есть ли параметр redirectTo
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get("redirectTo");
+
+      if (redirectTo && redirectTo !== "/login") {
+        this.redirectTo(redirectTo);
+      } else {
+        this.redirectTo("/user");
+      }
       return;
     }
   }
@@ -103,6 +120,19 @@ class RedirectService {
       window.history.pushState(null, "", path);
       // Диспатчим событие изменения URL для single-spa
       window.dispatchEvent(new PopStateEvent("popstate"));
+    }
+  }
+
+  private redirectToLogin(fromPath: string): void {
+    // Сохраняем текущий путь в query-параметре, если это не корневая страница
+    if (fromPath && fromPath !== "/" && fromPath !== "/login") {
+      const loginUrl = `/login?redirectTo=${encodeURIComponent(fromPath)}`;
+      if (window.location.pathname + window.location.search !== loginUrl) {
+        window.history.pushState(null, "", loginUrl);
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }
+    } else {
+      this.redirectTo("/login");
     }
   }
 

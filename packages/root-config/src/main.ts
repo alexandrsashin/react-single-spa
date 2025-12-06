@@ -87,10 +87,19 @@ applications.forEach((app) => {
     }
   } else if (!isAuthenticated && !isPublicRoute) {
     // Если неавторизован и пытается попасть на защищённый маршрут (не публичный)
-    window.history.replaceState(null, "", "/login");
+    // Сохраняем текущий путь в query-параметре redirectTo
+    const loginUrl = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
+    window.history.replaceState(null, "", loginUrl);
   } else if (isAuthenticated && currentPath.startsWith("/login")) {
-    // Если авторизован и на странице логина
-    window.history.replaceState(null, "", "/user");
+    // Если авторизован и на странице логина, проверяем redirectTo
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectTo = urlParams.get("redirectTo");
+    
+    if (redirectTo && redirectTo !== "/login") {
+      window.history.replaceState(null, "", redirectTo);
+    } else {
+      window.history.replaceState(null, "", "/user");
+    }
   }
 
   layoutEngine.activate();
