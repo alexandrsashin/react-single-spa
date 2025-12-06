@@ -4,6 +4,10 @@ import { AUTH_EVENTS } from "./types";
 class RedirectService {
   private initialized = false;
 
+  // Список публичных маршрутов (доступны всем)
+  // Все остальные маршруты считаются защищёнными и требуют авторизации
+  private publicRoutes = ["/login"];
+
   constructor() {
     this.initialize();
   }
@@ -51,13 +55,18 @@ class RedirectService {
   }
 
   private handleInitialNavigation(): void {
-    // Небольшая задержка для инициализации authService
-    setTimeout(() => {
+    // Ждём инициализации authService перед обработкой навигации
+    authService.waitForInitialization().then(() => {
       this.handleNavigation();
-    }, 100);
+    });
   }
 
   private handleNavigation(): void {
+    // Не выполняем редиректы, пока идёт инициализация
+    if (!authService.isInitializationComplete()) {
+      return;
+    }
+
     const currentPath = window.location.pathname;
     const isAuthenticated = authService.isAuthenticated();
 
@@ -71,8 +80,13 @@ class RedirectService {
       return;
     }
 
-    // Если пользователь не авторизован и пытается попасть на /user
-    if (!isAuthenticated && currentPath.startsWith("/user")) {
+    // Проверяем, является ли текущий путь публичным
+    const isPublicRoute = this.publicRoutes.some((route) =>
+      currentPath.startsWith(route)
+    );
+
+    // Если пользователь не авторизован и пытается попасть на защищённый маршрут (не публичный)
+    if (!isAuthenticated && !isPublicRoute) {
       this.redirectTo("/login");
       return;
     }
@@ -126,7 +140,11 @@ class RedirectService {
       return isAuthenticated ? "/user" : "/login";
     }
 
-    if (!isAuthenticated && targetPath.startsWith("/user")) {
+    const isPublicRoute = this.publicRoutes.some((route) =>
+      targetPath.startsWith(route)
+    );
+
+    if (!isAuthenticated && !isPublicRoute) {
       return "/login";
     }
 
@@ -135,6 +153,18 @@ class RedirectService {
     }
 
     return null;
+  }
+
+  // Публичный метод для добавления публичного маршрута
+  public addPublicRoute(route: string): void {
+    if (!this.publicRoutes.includes(route)) {
+      this.publicRoutes.push(route);
+    }
+  }
+
+  // Публичный метод для получения списка публичных маршрутов
+  public getPublicRoutes(): string[] {
+    return [...this.publicRoutes];
   }
 }
 

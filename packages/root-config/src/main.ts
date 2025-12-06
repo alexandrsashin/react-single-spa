@@ -8,6 +8,10 @@ import { microfrontendLayout } from "./microfrontend-layout";
 import { authService } from "./auth/AuthService";
 import { redirectService } from "./auth/RedirectService";
 import { navigationService } from "./auth/NavigationService";
+import { showLoader, hideLoader } from "./components/AppLoader";
+
+// Показываем лоадер при старте
+showLoader("Проверка авторизации...");
 
 // Ensure module is loaded for its side-effects (do not add to sharedState per config)
 void redirectService;
@@ -59,8 +63,39 @@ applications.forEach((app) => {
 
   registerApplication(appWithProps);
 });
-layoutEngine.activate();
-start();
+
+// Дождаться инициализации authService перед запуском приложения
+(async () => {
+  await authService.waitForInitialization();
+
+  // Скрываем лоадер после завершения инициализации
+  hideLoader();
+
+  // Проверяем, нужен ли редирект после инициализации
+  const isAuthenticated = authService.isAuthenticated();
+  const currentPath = window.location.pathname;
+  const publicRoutes = ["/login"];
+  const isPublicRoute = publicRoutes.some((route) =>
+    currentPath.startsWith(route)
+  );
+
+  if (currentPath === "/" || currentPath === "") {
+    if (isAuthenticated) {
+      window.history.replaceState(null, "", "/user");
+    } else {
+      window.history.replaceState(null, "", "/login");
+    }
+  } else if (!isAuthenticated && !isPublicRoute) {
+    // Если неавторизован и пытается попасть на защищённый маршрут (не публичный)
+    window.history.replaceState(null, "", "/login");
+  } else if (isAuthenticated && currentPath.startsWith("/login")) {
+    // Если авторизован и на странице логина
+    window.history.replaceState(null, "", "/user");
+  }
+
+  layoutEngine.activate();
+  start();
+})();
 
 // --- Root-config 404 handling (render Antd Result for non-/login and non-/user routes) ---
 function ensureNotFoundContainer() {
@@ -94,8 +129,13 @@ function showNotFoundIfNeeded() {
   // track whether NotFound has been mounted to avoid unnecessary unmount/remount
   // when switching between multiple non-existent routes
   // (module-level flag below)
-  // Only show 404 for routes that are not /login and not /user
-  if (path !== "/login" && path !== "/user") {
+  // Список известных маршрутов (не показываем 404)
+  const knownRoutes = ["/login", "/user", "/roles", "/admin", "/"];
+  const isKnownRoute = knownRoutes.some(
+    (route) => path === route || path.startsWith(route + "/")
+  );
+
+  if (!isKnownRoute) {
     const container = ensureNotFoundContainer();
     // dynamic import so we don't bloat the initial bundle
     import("./components/NotFound").then((mod) => {

@@ -36,6 +36,7 @@ interface AuthEvents {
   AUTH_LOGOUT: "auth:logout";
   AUTH_TOKEN_REFRESHED: "auth:token-refreshed";
   AUTH_ERROR: "auth:error";
+  AUTH_INITIALIZED: "auth:initialized";
 }
 
 export const AUTH_EVENTS: AuthEvents = {
@@ -44,6 +45,7 @@ export const AUTH_EVENTS: AuthEvents = {
   AUTH_LOGOUT: "auth:logout",
   AUTH_TOKEN_REFRESHED: "auth:token-refreshed",
   AUTH_ERROR: "auth:error",
+  AUTH_INITIALIZED: "auth:initialized",
 };
 
 export interface NavigationUtilsAPI {

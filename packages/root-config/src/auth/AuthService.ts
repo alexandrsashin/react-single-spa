@@ -9,6 +9,9 @@ class AuthService {
     tokenExpiry: null,
   };
 
+  private isInitializing = true;
+  private initializationPromise: Promise<void>;
+
   private readonly STORAGE_KEYS = {
     ACCESS_TOKEN: "auth_access_token",
     REFRESH_TOKEN: "auth_refresh_token",
@@ -19,8 +22,31 @@ class AuthService {
   private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    this.initializeFromStorage();
-    this.setupTokenRefresh();
+    this.initializationPromise = this.initializeAsync();
+  }
+
+  // Асинхронная инициализация
+  private async initializeAsync(): Promise<void> {
+    try {
+      this.initializeFromStorage();
+      this.setupTokenRefresh();
+    } finally {
+      this.isInitializing = false;
+      // Уведомляем об окончании инициализации
+      this.dispatchEvent(AUTH_EVENTS.AUTH_INITIALIZED, {
+        isAuthenticated: this.state.isAuthenticated,
+      });
+    }
+  }
+
+  // Ожидание завершения инициализации
+  async waitForInitialization(): Promise<void> {
+    await this.initializationPromise;
+  }
+
+  // Проверка статуса инициализации
+  isInitializationComplete(): boolean {
+    return !this.isInitializing;
   }
 
   // Инициализация состояния из localStorage
@@ -230,7 +256,7 @@ class AuthService {
     });
   }
 
-  private dispatchEvent(eventType: string, detail: any): void {
+  private dispatchEvent(eventType: string, detail: unknown): void {
     const event = new CustomEvent(eventType, { detail });
     window.dispatchEvent(event);
   }

@@ -6,6 +6,7 @@ export const AUTH_EVENTS = {
   AUTH_LOGOUT: "auth:logout",
   AUTH_TOKEN_REFRESHED: "auth:token-refreshed",
   AUTH_ERROR: "auth:error",
+  AUTH_INITIALIZED: "auth:initialized",
 };
 
 // Default export (handy for some bundlers/resolvers)
