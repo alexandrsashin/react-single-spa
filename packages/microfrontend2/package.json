@@ -14,9 +14,9 @@
     "single-spa-react": "^6.0.2"
   },
   "devDependencies": {
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^7.2.6"
   }
 }
