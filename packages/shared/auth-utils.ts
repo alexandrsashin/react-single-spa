@@ -24,11 +24,11 @@ interface AuthAPI {
   subscribe(callback: (state: AuthState) => void): () => void;
 }
 
-// Получение AuthService из global scope (root-config)
+// Получение AuthService из shared module (root-config export)
 export async function getAuthService(): Promise<AuthAPI | null> {
-  // Try to use the singleton `authService` exported by the root-config package
-  // when available at runtime (preferred). Fall back to the global
-  // `window.authService` for environments where root-config isn't imported.
+  // Use the singleton `authService` exported by the root-config package
+  // This is the preferred way to access auth service in microfrontends
+  // instead of using global window object
   try {
     // dynamic import to avoid ESM/CJS issues and keep this function async
     const module: any = await import("../root-config/src/auth/AuthService");
