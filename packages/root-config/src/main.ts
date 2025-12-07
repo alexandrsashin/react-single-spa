@@ -9,6 +9,7 @@ import { authService } from "./auth/AuthService";
 import { redirectService } from "./auth/RedirectService";
 import { navigationService } from "./auth/NavigationService";
 import { showLoader, hideLoader } from "./components/AppLoader";
+import "antd/dist/reset.css"; // ensure Ant Design base styles load early to avoid FOUC
 
 // Показываем лоадер при старте
 showLoader("Проверка авторизации...");
@@ -94,7 +95,7 @@ applications.forEach((app) => {
     // Если авторизован и на странице логина, проверяем redirectTo
     const urlParams = new URLSearchParams(window.location.search);
     const redirectTo = urlParams.get("redirectTo");
-    
+
     if (redirectTo && redirectTo !== "/login") {
       window.history.replaceState(null, "", redirectTo);
     } else {
