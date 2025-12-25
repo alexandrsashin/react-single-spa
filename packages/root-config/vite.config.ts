@@ -19,14 +19,8 @@ interface PackageManifest {
 }
 
 interface ImportMapConfig {
-  development: {
-    imports: Record<string, string>;
-    scopes: Record<string, Record<string, string>>;
-  };
-  production: {
-    imports: Record<string, string>;
-    scopes: Record<string, Record<string, string>>;
-  };
+  imports: Record<string, string>;
+  scopes: Record<string, Record<string, string>>;
 }
 
 // Read manifest from a microfrontend package
@@ -87,91 +81,57 @@ function generateImportMapPlugin(): Plugin {
       packages.forEach((pkg) => {
         const file = readMicrofrontendManifest(pkg);
         if (file) {
-          const importMapName =
-            pkg === "header" || pkg === "sidebar" || pkg === "notification-bell"
-              ? `@react-single-spa/${pkg}`
-              : `@react-single-spa/${pkg}`;
+          const importMapName = `@react-single-spa/${pkg}`;
           manifestFiles[importMapName] = file;
         }
       });
 
-      // Generate importmap.json
-      const importMap: ImportMapConfig = {
-        development: {
-          imports: {
-            "root-config": "http://localhost:3000/src/main.ts",
-            "@react-single-spa/header": "http://localhost:3008/src/main.ts",
-            "@react-single-spa/microfrontend":
-              "http://localhost:3006/src/main.ts",
-            "@react-single-spa/microfrontend2":
-              "http://localhost:3007/src/main.ts",
-            "@react-single-spa/sidebar": "http://localhost:3010/src/main.ts",
-            react: "https://ga.jspm.io/npm:react@19.2.0/dev.index.js",
-            "react-dom": "https://ga.jspm.io/npm:react-dom@19.2.0/dev.index.js",
-            "react-dom/client":
-              "https://ga.jspm.io/npm:react-dom@19.2.0/dev.client.js",
-            "react/jsx-dev-runtime":
-              "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-dev-runtime.js",
-            "react/jsx-runtime":
-              "https://ga.jspm.io/npm:react@19.2.0/dev.jsx-runtime.js",
-            "single-spa":
-              "https://ga.jspm.io/npm:single-spa@5.9.5/lib/esm/single-spa.min.js",
-            "single-spa-react":
-              "https://ga.jspm.io/npm:single-spa-react@5.0.2/lib/esm/single-spa-react.js",
-            antd: "https://ga.jspm.io/npm:antd@5.21.4/es/index.js",
-            "@ant-design/icons":
-              "https://ga.jspm.io/npm:@ant-design/icons@5.5.1/es/index.js",
-          },
-          scopes: {
-            "https://ga.jspm.io/": {
-              scheduler: "https://ga.jspm.io/npm:scheduler@0.23.0/dev.index.js",
-            },
-          },
+      // Generate production importmap.json (completely overwrite)
+      const productionImportMap = {
+        imports: {
+          "root-config": rootConfigFile,
+          ...manifestFiles,
+          react:
+            process.env.REACT_CDN ||
+            "https://ga.jspm.io/npm:react@19.2.0/index.js",
+          "react-dom":
+            process.env.REACT_DOM_CDN ||
+            "https://ga.jspm.io/npm:react-dom@19.2.0/index.js",
+          "react-dom/client":
+            process.env.REACT_DOM_CLIENT_CDN ||
+            "https://ga.jspm.io/npm:react-dom@19.2.0/client.js",
+          "react/jsx-runtime":
+            process.env.REACT_JSX_RUNTIME_CDN ||
+            "https://ga.jspm.io/npm:react@19.2.0/jsx-runtime.js",
+          "single-spa":
+            process.env.SINGLE_SPA_CDN ||
+            "https://unpkg.com/single-spa@5.9.5/lib/esm/single-spa.min.js",
+          "single-spa-react":
+            process.env.SINGLE_SPA_REACT_CDN ||
+            "https://unpkg.com/single-spa-react@5.0.2/lib/esm/single-spa-react.js",
+          antd:
+            process.env.ANTD_CDN ||
+            "https://ga.jspm.io/npm:antd@5.21.4/es/index.js",
+          "@ant-design/icons":
+            process.env.ANT_DESIGN_ICONS_CDN ||
+            "https://ga.jspm.io/npm:@ant-design/icons@5.5.1/es/index.js",
         },
-        production: {
-          imports: {
-            "root-config": rootConfigFile,
-            ...manifestFiles,
-            react:
-              process.env.REACT_CDN ||
-              "https://ga.jspm.io/npm:react@19.2.0/index.js",
-            "react-dom":
-              process.env.REACT_DOM_CDN ||
-              "https://ga.jspm.io/npm:react-dom@19.2.0/index.js",
-            "react-dom/client":
-              process.env.REACT_DOM_CLIENT_CDN ||
-              "https://ga.jspm.io/npm:react-dom@19.2.0/client.js",
-            "react/jsx-runtime":
-              process.env.REACT_JSX_RUNTIME_CDN ||
-              "https://ga.jspm.io/npm:react@19.2.0/jsx-runtime.js",
-            "single-spa":
-              process.env.SINGLE_SPA_CDN ||
-              "https://unpkg.com/single-spa@5.9.5/lib/esm/single-spa.min.js",
-            "single-spa-react":
-              process.env.SINGLE_SPA_REACT_CDN ||
-              "https://unpkg.com/single-spa-react@5.0.2/lib/esm/single-spa-react.js",
-            antd:
-              process.env.ANTD_CDN ||
-              "https://ga.jspm.io/npm:antd@5.21.4/es/index.js",
-            "@ant-design/icons":
-              process.env.ANT_DESIGN_ICONS_CDN ||
-              "https://ga.jspm.io/npm:@ant-design/icons@5.5.1/es/index.js",
-          },
-          scopes: {
-            "https://ga.jspm.io/": {
-              scheduler: "https://ga.jspm.io/npm:scheduler@0.23.0/index.js",
-            },
+        scopes: {
+          "https://ga.jspm.io/": {
+            scheduler: "https://ga.jspm.io/npm:scheduler@0.23.0/index.js",
           },
         },
       };
 
-      // Save importmap.json
+      // Save production importmap.json
       fs.writeFileSync(
         path.join(distDir, "importmap.json"),
-        JSON.stringify(importMap, null, 2),
+        JSON.stringify(productionImportMap, null, 2),
         "utf-8"
       );
-      console.log("✅ Generated importmap.json with hashed filenames");
+      console.log(
+        "✅ Generated production importmap.json with hashed filenames"
+      );
       console.log("📦 Production imports:");
       console.log(`   root-config: ${rootConfigFile}`);
       Object.entries(manifestFiles).forEach(([name, file]) => {

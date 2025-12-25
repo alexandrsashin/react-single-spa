@@ -13,15 +13,12 @@
     <!-- This script is required for react-refresh to work properly -->
     <script>
       (async function () {
-        // Wait for importmap-loader to be ready
-        if (typeof window.getEnvironment !== "function") {
-          console.warn("[react-refresh] getEnvironment not available yet");
-          return;
-        }
+        // React refresh только для dev режима (когда есть Vite HMR)
+        const isDev =
+          window.location.port >= 3000 && window.location.port < 4000;
 
-        const env = window.getEnvironment();
-        if (env !== "development") {
-          console.log("[react-refresh] skipping in", env, "mode");
+        if (!isDev) {
+          console.log("[react-refresh] skipping in production mode");
           return;
         }
 
@@ -30,7 +27,6 @@
           setupReactRefresh();
         } catch (error) {
           // Не ломаем загрузку приложения из-за несущественной ошибки
-          // (например, модуль недоступен). Логируем для отладки.
           console.warn("[react-refresh] failed to load:", error);
         }
       })();
@@ -42,7 +38,7 @@
       window
         .loadImportMap()
         .then(() => {
-          console.log("Environment:", window.getEnvironment());
+          console.log("🚀 Starting application...");
           // Import root config after importmap is loaded
           // Tell Vite to ignore rewriting this specifier so the importmap
           // entry for "root-config" can take effect at runtime.
@@ -55,16 +51,11 @@
             "Failed to load importmap, falling back to static:",
             err
           );
-          // Fallback: try to import anyway
-          // If importmap failed to load, try a direct dev path so the browser
-          // doesn't attempt to fetch a bare specifier like /root-config which
-          // returns HTML instead of JS.
-          const devEntry = "/src/main.ts";
-          const specifier =
-            typeof window.getEnvironment === "function" &&
-            window.getEnvironment() === "development"
-              ? devEntry
-              : "root-config";
+          // Fallback: try to import anyway with dev path for localhost:3000
+          const isDev =
+            window.location.port >= 3000 && window.location.port < 4000;
+          const specifier = isDev ? "/src/main.ts" : "root-config";
+
           import(/* @vite-ignore */ specifier).catch((importErr) => {
             console.error(
               "Failed to load root-config even with fallback:",
