@@ -13,10 +13,17 @@
     <!-- This script is required for react-refresh to work properly -->
     <script>
       (async function () {
-        const host = window.location.hostname;
-        const isDev = host === "localhost" || host === "127.0.0.1";
+        // Wait for importmap-loader to be ready
+        if (typeof window.getEnvironment !== "function") {
+          console.warn("[react-refresh] getEnvironment not available yet");
+          return;
+        }
 
-        if (!isDev) return;
+        const env = window.getEnvironment();
+        if (env !== "development") {
+          console.log("[react-refresh] skipping in", env, "mode");
+          return;
+        }
 
         try {
           const { setupReactRefresh } = await import("/react-refresh-setup.js");
@@ -24,8 +31,7 @@
         } catch (error) {
           // Не ломаем загрузку приложения из-за несущественной ошибки
           // (например, модуль недоступен). Логируем для отладки.
-          // eslint-disable-next-line no-console
-          console.warn("[react-refresh] failed to load:", err);
+          console.warn("[react-refresh] failed to load:", error);
         }
       })();
     </script>
@@ -45,18 +51,25 @@
           });
         })
         .catch((err) => {
-          console.error("Failed to load importmap, falling back to static:", err);
+          console.error(
+            "Failed to load importmap, falling back to static:",
+            err
+          );
           // Fallback: try to import anyway
           // If importmap failed to load, try a direct dev path so the browser
           // doesn't attempt to fetch a bare specifier like /root-config which
           // returns HTML instead of JS.
           const devEntry = "/src/main.ts";
           const specifier =
-            typeof window.getEnvironment === "function" && window.getEnvironment() === "development"
+            typeof window.getEnvironment === "function" &&
+            window.getEnvironment() === "development"
               ? devEntry
               : "root-config";
           import(/* @vite-ignore */ specifier).catch((importErr) => {
-            console.error("Failed to load root-config even with fallback:", importErr);
+            console.error(
+              "Failed to load root-config even with fallback:",
+              importErr
+            );
           });
         });
     </script>

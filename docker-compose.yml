@@ -1,0 +1,14 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: react-single-spa-prod
+    restart: unless-stopped
+    volumes:
+      # Optional: mount for live updates during testing
+      # - ./packages/root-config/dist:/usr/share/nginx/html:ro
+      # - ./packages/header/dist:/usr/share/nginx/html/dist:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro

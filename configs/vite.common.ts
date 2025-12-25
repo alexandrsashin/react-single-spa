@@ -1,4 +1,4 @@
-import { defineConfig, UserConfig } from "vite";
+import { defineConfig, UserConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import viteExternalizeDeps from "vite-plugin-externalize-dependencies";
 import fs from "fs";
@@ -8,6 +8,7 @@ type CreateViteOptions = {
   externals?: string[];
   input?: string;
   port: number;
+  plugins?: Plugin[];
 };
 
 function readPackageJson(packageDir: string): { name: string; version: string } {
@@ -25,16 +26,13 @@ function readPackageJson(packageDir: string): { name: string; version: string } 
 }
 
 export default function createViteConfig(options: CreateViteOptions) {
-  const { externals = [], input = "src/main.ts", port } = options;
+  const { externals = [], input = "src/main.ts", port, plugins: additionalPlugins = [] } = options;
 
   return defineConfig(() => {
     const packageDir = process.cwd();
-    const { name, version } = readPackageJson(packageDir);
-    const outputFileName = `${name}-${version}.js`;
+    const { name } = readPackageJson(packageDir);
 
-    const plugins: (ReturnType<typeof react> | ReturnType<typeof viteExternalizeDeps>)[] = [
-      react(),
-    ];
+    const plugins: Plugin[] = [react()];
     if (externals && externals.length > 0) {
       plugins.push(
         viteExternalizeDeps({
@@ -42,6 +40,8 @@ export default function createViteConfig(options: CreateViteOptions) {
         })
       );
     }
+    // Add any additional plugins
+    plugins.push(...additionalPlugins);
 
     const config: UserConfig = {
       plugins,
@@ -49,9 +49,16 @@ export default function createViteConfig(options: CreateViteOptions) {
         port,
       },
       build: {
+        manifest: true, // Generate manifest.json with hashed filenames
         rollupOptions: {
           input,
-          output: { format: "esm", dir: "dist", entryFileNames: outputFileName },
+          preserveEntrySignatures: "exports-only",
+          output: {
+            format: "esm",
+            dir: "dist",
+            // Use Vite's default hashing: [name]-[hash].js
+            entryFileNames: "[name]-[hash].js",
+          },
           external: externals,
         },
       },

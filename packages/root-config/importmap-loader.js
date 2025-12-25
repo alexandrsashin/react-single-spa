@@ -2,23 +2,56 @@
 (function () {
   // Определяем среду выполнения
   function getEnvironment() {
-    // Проверяем хост
     const host = window.location.hostname;
+    const port = window.location.port;
 
-    // Локальная разработка
-    if (
-      host === "localhost" ||
-      host === "127.0.0.1" ||
-      host.includes(".local")
-    ) {
-      return "development";
-    }
-
-    // Проверяем query параметры для принудительного режима
+    // Проверяем query параметры для принудительного режима (высший приоритет)
     const urlParams = new URLSearchParams(window.location.search);
     const forcedEnv = urlParams.get("env");
     if (forcedEnv === "development" || forcedEnv === "production") {
+      console.log(`Environment forced via query param: ${forcedEnv}`);
       return forcedEnv;
+    }
+
+    // Локальная разработка на localhost/127.0.0.1
+    const isLocalhost =
+      host === "localhost" || host === "127.0.0.1" || host.includes(".local");
+
+    if (isLocalhost) {
+      // Определяем по порту:
+      // 3000-3999 - dev режим (Vite dev servers)
+      // 8080-8089 - production режим (nginx/docker)
+      // Другие порты - смотрим на наличие dev-индикаторов
+
+      const portNum = parseInt(port, 10);
+
+      // Явно dev порты (Vite dev servers)
+      if (portNum >= 3000 && portNum <= 3999) {
+        console.log(`Development mode detected (port ${port})`);
+        return "development";
+      }
+
+      // Явно production порты (nginx/docker)
+      if (
+        portNum === 8080 ||
+        portNum === 8081 ||
+        portNum === 80 ||
+        portNum === 443
+      ) {
+        console.log(`Production mode detected (port ${port})`);
+        return "production";
+      }
+
+      // Если порт не указан или неожиданный - проверяем другие индикаторы
+      // Наличие HMR или react-refresh указывает на dev
+      if (window.__vite__ || window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+        console.log("Development mode detected (dev tools present)");
+        return "development";
+      }
+
+      // По умолчанию для localhost с неопределенным портом - development
+      console.log(`Development mode (localhost default)`);
+      return "development";
     }
 
     // Проверяем переменную среды (если доступна)
@@ -28,7 +61,8 @@
         : "production";
     }
 
-    // По умолчанию production для продакшена
+    // Для всех остальных доменов - production
+    console.log(`Production mode (non-localhost: ${host})`);
     return "production";
   }
 

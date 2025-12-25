@@ -1,0 +1,22 @@
+node_modules
+.git
+.gitignore
+.env\*
+\*.md
+!README.md
+.DS_Store
+.vscode
+.idea
+
+# Keep only dist folders
+
+**/src
+**/tests
+**/\*.test.ts
+**/_.test.tsx
+\*\*/_.spec.ts \*_/_.spec.tsx
+
+# Exclude non-production files
+
+coverage
+.nyc_output
