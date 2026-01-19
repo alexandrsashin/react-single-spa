@@ -15,6 +15,44 @@ export interface CSSLoaderOptions {
   cleanupOnUnmount?: boolean; // Default: false
 }
 
+interface ManifestEntry {
+  file: string;
+  css?: string[];
+  imports?: string[];
+  dynamicImports?: string[];
+}
+
+function collectCssFiles(
+  manifest: Record<string, ManifestEntry>,
+  startKey: string,
+): Set<string> {
+  const visited = new Set<string>();
+  const cssFiles = new Set<string>();
+
+  const walk = (key: string | undefined) => {
+    if (!key || visited.has(key)) {
+      return;
+    }
+
+    visited.add(key);
+    const chunk = manifest[key];
+    if (!chunk) {
+      return;
+    }
+
+    if (Array.isArray(chunk.css)) {
+      chunk.css.forEach((css) => cssFiles.add(css));
+    }
+
+    if (Array.isArray(chunk.imports)) {
+      chunk.imports.forEach((importKey) => walk(importKey));
+    }
+  };
+
+  walk(startKey);
+  return cssFiles;
+}
+
 /**
  * Load CSS files for a microfrontend from its Vite manifest
  */
@@ -35,14 +73,21 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
 
   return fetch(manifestPath)
     .then((res) => res.json())
-    .then((manifest) => {
-      const entry = manifest["src/main.ts"];
-      if (!entry || !entry.css) {
+    .then((manifest: Record<string, ManifestEntry>) => {
+      const entryKey = "src/main.ts";
+      const entry = manifest[entryKey];
+      if (!entry) {
         return;
       }
 
-      entry.css.forEach((cssFile: string) => {
-        const fullPath = `${manifestPath.replace("/.vite/manifest.json", "")}/${cssFile}`;
+      const cssFiles = collectCssFiles(manifest, entryKey);
+      if (cssFiles.size === 0) {
+        return;
+      }
+
+      const basePath = manifestPath.replace("/.vite/manifest.json", "");
+      cssFiles.forEach((cssFile) => {
+        const fullPath = `${basePath}/${cssFile}`;
 
         // Skip if already loaded by this app
         if (appCssFiles.has(fullPath)) {
@@ -55,7 +100,7 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
         if (existingLink) {
           appCssFiles.add(fullPath);
           console.log(
-            `[${appName}] CSS link already exists in DOM: ${cssFile}`
+            `[${appName}] CSS link already exists in DOM: ${cssFile}`,
           );
           return;
         }
@@ -101,7 +146,7 @@ export function unloadMicrofrontendCSS(appName: string): void {
  */
 export function wrapLifecyclesWithCSS(
   lifecycles: any,
-  options: CSSLoaderOptions
+  options: CSSLoaderOptions,
 ) {
   const { appName, cleanupOnUnmount = false } = options;
 
