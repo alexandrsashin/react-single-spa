@@ -25,7 +25,7 @@ export interface AuthService {
   isAuthenticated(): boolean;
   getCurrentUser(): User | null;
   subscribe(callback: (state: AuthState) => void): () => void;
-  getValidAccessToken(): Promise<string | null>;
+  getAccessToken(): Promise<string | null>;
   login(credentials: LoginCredentials): Promise<void>;
   logout(): void;
 }

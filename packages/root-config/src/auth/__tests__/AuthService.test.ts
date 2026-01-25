@@ -127,7 +127,7 @@ describe("authService (unit tests)", () => {
     expect(logoutSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("getValidAccessToken auto-refreshes when token is expiring within 5 minutes", async () => {
+  it("getAccessToken auto-refreshes when token is expiring within 5 minutes", async () => {
     // Step 1: login with fresh instance
     let authService = await importFreshAuthService();
 
@@ -156,8 +156,8 @@ describe("authService (unit tests)", () => {
       refreshedSpy((e as CustomEvent).detail);
     });
 
-    // Call getValidAccessToken which should trigger refreshAccessToken because expiry < 5 min
-    const tokenPromise = authService.getValidAccessToken();
+    // Call getAccessToken which should trigger refreshAccessToken because expiry < 5 min
+    const tokenPromise = authService.getAccessToken();
 
     // advance timers for mockRefreshToken (500ms)
     await vi.advanceTimersByTimeAsync(500);
@@ -410,10 +410,10 @@ describe("authService (unit tests)", () => {
     expect(authService.isAuthenticated()).toBe(false);
   });
 
-  it("getValidAccessToken returns null if not authenticated", async () => {
+  it("getAccessToken returns null if not authenticated", async () => {
     const authService = await importFreshAuthService();
 
-    const token = await authService.getValidAccessToken();
+    const token = await authService.getAccessToken();
     expect(token).toBeNull();
   });
 });

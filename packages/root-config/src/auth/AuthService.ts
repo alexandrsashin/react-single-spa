@@ -177,7 +177,7 @@ class AuthService {
   }
 
   // Получение текущего токена (с автообновлением если нужно)
-  async getValidAccessToken(): Promise<string | null> {
+  async getAccessToken(): Promise<string | null> {
     if (!this.state.accessToken) {
       if (this.state.refreshToken) {
         return await this.refreshAccessToken();

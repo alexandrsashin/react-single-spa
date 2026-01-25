@@ -298,7 +298,7 @@ import { authService } from "./auth/AuthService";
 await authService.login({ email, password });
 authService.logout();
 const isAuth = authService.isAuthenticated();
-const token = await authService.getValidAccessToken();
+const token = await authService.getAccessToken();
 
 // RedirectService - защита маршрутов
 // Автоматически редиректит неавторизованных пользователей

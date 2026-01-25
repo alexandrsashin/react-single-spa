@@ -18,7 +18,7 @@ interface AuthAPI {
   getState(): AuthState;
   isAuthenticated(): boolean;
   getCurrentUser(): User | null;
-  getValidAccessToken(): Promise<string | null>;
+  getAccessToken(): Promise<string | null>;
   login(credentials: { email: string; password: string }): Promise<void>;
   logout(): void;
   subscribe(callback: (state: AuthState) => void): () => void;
@@ -40,7 +40,7 @@ export async function getAuthService(): Promise<AuthAPI | null> {
   }
 
   console.warn(
-    "AuthService not available. Make sure root-config is loaded first."
+    "AuthService not available. Make sure root-config is loaded first.",
   );
   return null;
 }
@@ -48,7 +48,7 @@ export async function getAuthService(): Promise<AuthAPI | null> {
 // Утилита для проверки прав доступа
 export function hasPermission(
   user: User | null,
-  permissions: string[]
+  permissions: string[],
 ): boolean {
   if (!user?.roles) return false;
   return permissions.some((permission) => user.roles?.includes(permission));
@@ -59,7 +59,7 @@ export async function getAuthToken(): Promise<string | null> {
   const authService = await getAuthService();
   if (!authService) return null;
 
-  return await authService.getValidAccessToken();
+  return await authService.getAccessToken();
 }
 
 // Глобальные типы для TypeScript

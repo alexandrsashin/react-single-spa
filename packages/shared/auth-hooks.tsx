@@ -44,7 +44,7 @@ export function useAuth() {
         await authService.login(credentials);
       }
     },
-    []
+    [],
   );
 
   const logout = useCallback(async () => {
@@ -57,7 +57,7 @@ export function useAuth() {
   const getValidToken = useCallback(async () => {
     const authService = await getAuthService();
     if (authService) {
-      return await authService.getValidAccessToken();
+      return await authService.getAccessToken();
     }
     return null;
   }, []);

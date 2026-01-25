@@ -17,7 +17,7 @@
 
 - `login(credentials)` - Аутентификация пользователя
 - `logout()` - Выход из системы
-- `getValidAccessToken()` - Получение актуального токена (с автообновлением)
+- `getAccessToken()` - Получение актуального токена (с автообновлением)
 - `subscribe(callback)` - Подписка на изменения состояния
 
 ### 2. Shared Utilities (`packages/shared/auth-utils.ts`)
