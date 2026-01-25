@@ -48,12 +48,10 @@ describe("authService (unit tests)", () => {
     // storage checks
     const access = localStorage.getItem("auth_access_token");
     const refresh = localStorage.getItem("auth_refresh_token");
-    const user = localStorage.getItem("auth_user");
     const expiry = localStorage.getItem("auth_token_expiry");
 
     expect(access).toBeTruthy();
     expect(refresh).toBeTruthy();
-    expect(user).toBeTruthy();
     expect(expiry).toBeTruthy();
 
     expect(loginEventSpy).toHaveBeenCalledTimes(1);
@@ -124,7 +122,6 @@ describe("authService (unit tests)", () => {
     // storage should be cleared
     expect(localStorage.getItem("auth_access_token")).toBeNull();
     expect(localStorage.getItem("auth_refresh_token")).toBeNull();
-    expect(localStorage.getItem("auth_user")).toBeNull();
     expect(localStorage.getItem("auth_token_expiry")).toBeNull();
 
     expect(logoutSpy).toHaveBeenCalledTimes(1);
@@ -254,55 +251,67 @@ describe("authService (unit tests)", () => {
   it("initializeFromStorage restores valid state from localStorage", async () => {
     // Pre-populate localStorage with valid auth data
     const futureExpiry = Date.now() + 60 * 60 * 1000; // 1 hour from now
-    const user = {
-      id: "123",
-      email: "stored@example.com",
-      name: "Stored User",
-      roles: ["user"],
-    };
 
     localStorage.setItem("auth_access_token", "stored-access-token");
     localStorage.setItem("auth_refresh_token", "stored-refresh-token");
-    localStorage.setItem("auth_user", JSON.stringify(user));
     localStorage.setItem("auth_token_expiry", futureExpiry.toString());
 
     // Import fresh instance to trigger initialization from storage
     const authService = await importFreshAuthService();
-    await authService.waitForInitialization();
+    const waitPromise = authService.waitForInitialization();
+    await vi.advanceTimersByTimeAsync(500);
+    await waitPromise;
 
     expect(authService.isAuthenticated()).toBe(true);
-    expect(authService.getCurrentUser()).toEqual(user);
+    expect(authService.getCurrentUser()).toBeNull();
+
+    const stateAfterInit = authService.getState();
+    expect(stateAfterInit.accessToken).toMatch(/^mock-access-token-refreshed-/);
+    expect(stateAfterInit.refreshToken).toBe("stored-refresh-token");
+    expect(localStorage.getItem("auth_access_token")).toEqual(
+      stateAfterInit.accessToken,
+    );
   });
 
-  it("initializeFromStorage clears storage if token is expired", async () => {
-    // Pre-populate with expired token
-    const pastExpiry = Date.now() - 1000; // 1 second ago
+  it("initializeFromStorage refreshes tokens even if stored access token expired", async () => {
+    const pastExpiry = Date.now() - 1000;
 
     localStorage.setItem("auth_access_token", "expired-token");
     localStorage.setItem("auth_refresh_token", "expired-refresh");
-    localStorage.setItem(
-      "auth_user",
-      JSON.stringify({
-        id: "1",
-        email: "test@test.com",
-        name: "Test",
-        roles: [],
-      }),
-    );
     localStorage.setItem("auth_token_expiry", pastExpiry.toString());
+
+    const authService = await importFreshAuthService();
+    const waitPromise = authService.waitForInitialization();
+    await vi.advanceTimersByTimeAsync(500);
+    await waitPromise;
+
+    expect(authService.isAuthenticated()).toBe(true);
+    const refreshedState = authService.getState();
+    expect(refreshedState.accessToken).toMatch(/^mock-access-token-refreshed-/);
+    expect(refreshedState.tokenExpiry).toBeGreaterThan(Date.now());
+    expect(localStorage.getItem("auth_access_token")).toEqual(
+      refreshedState.accessToken,
+    );
+  });
+
+  it("initializeFromStorage clears storage when refresh token is missing", async () => {
+    localStorage.setItem("auth_access_token", "orphan-access-token");
+    localStorage.setItem(
+      "auth_token_expiry",
+      (Date.now() + 60 * 60 * 1000).toString(),
+    );
 
     const authService = await importFreshAuthService();
     await authService.waitForInitialization();
 
-    // Should not be authenticated with expired token
     expect(authService.isAuthenticated()).toBe(false);
     expect(localStorage.getItem("auth_access_token")).toBeNull();
+    expect(localStorage.getItem("auth_refresh_token")).toBeNull();
   });
 
   it("initializeFromStorage handles corrupted localStorage gracefully", async () => {
     // Set invalid JSON in user field
     localStorage.setItem("auth_access_token", "some-token");
-    localStorage.setItem("auth_user", "invalid-json{{{");
 
     const authService = await importFreshAuthService();
     await authService.waitForInitialization();

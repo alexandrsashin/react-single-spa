@@ -242,7 +242,7 @@ localStorage.setItem("devtools", true);
 // Переопределить URL конкретного микрофронтенда
 localStorage.setItem(
   "import-map-override:@react-single-spa/microfrontend",
-  "http://localhost:4000/src/main.ts"
+  "http://localhost:4000/src/main.ts",
 );
 ```
 
@@ -460,7 +460,6 @@ React-хуки и утилиты для микрофронтендов:
 ```javascript
 localStorage.getItem("auth_access_token"); // JWT access token
 localStorage.getItem("auth_refresh_token"); // Refresh token
-localStorage.getItem("auth_user"); // JSON с данными пользователя
 localStorage.getItem("auth_token_expiry"); // Timestamp истечения
 ```
 

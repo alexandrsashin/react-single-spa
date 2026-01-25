@@ -15,7 +15,6 @@ class AuthService {
   private readonly STORAGE_KEYS = {
     ACCESS_TOKEN: "auth_access_token",
     REFRESH_TOKEN: "auth_refresh_token",
-    USER: "auth_user",
     TOKEN_EXPIRY: "auth_token_expiry",
   };
 
@@ -29,7 +28,7 @@ class AuthService {
   // Асинхронная инициализация
   private async initializeAsync(): Promise<void> {
     try {
-      this.initializeFromStorage();
+      await this.initializeFromStorage();
       this.setupTokenRefresh();
     } finally {
       this.isInitializing = false;
@@ -51,36 +50,35 @@ class AuthService {
   }
 
   // Инициализация состояния из localStorage
-  private initializeFromStorage(): void {
+  private async initializeFromStorage(): Promise<void> {
     try {
       const accessToken = localStorage.getItem(this.STORAGE_KEYS.ACCESS_TOKEN);
       const refreshToken = localStorage.getItem(
         this.STORAGE_KEYS.REFRESH_TOKEN,
       );
-      const userStr = localStorage.getItem(this.STORAGE_KEYS.USER);
       const tokenExpiryStr = localStorage.getItem(
         this.STORAGE_KEYS.TOKEN_EXPIRY,
       );
 
-      if (accessToken && userStr) {
-        const user = JSON.parse(userStr) as User;
-        const tokenExpiry = tokenExpiryStr
-          ? parseInt(tokenExpiryStr, 10)
-          : null;
-
-        // Проверяем, не истек ли токен
-        if (tokenExpiry && Date.now() < tokenExpiry) {
-          this.updateState({
-            isAuthenticated: true,
-            user,
-            accessToken,
-            refreshToken,
-            tokenExpiry,
-          });
-        } else {
-          // Токен истек, очищаем состояние
+      if (!refreshToken) {
+        if (accessToken || tokenExpiryStr) {
           this.clearStorage();
         }
+        return;
+      }
+
+      this.state = {
+        isAuthenticated: false,
+        user: null,
+        accessToken: null,
+        refreshToken,
+        tokenExpiry: null,
+      };
+
+      const refreshedToken = await this.refreshAccessToken();
+
+      if (!refreshedToken) {
+        this.clearStorage();
       }
     } catch (error) {
       console.error("Error initializing auth from storage:", error);
@@ -149,6 +147,7 @@ class AuthService {
 
         this.updateState({
           ...this.state,
+          isAuthenticated: true,
           accessToken: response.accessToken,
           tokenExpiry: response.tokenExpiry,
         });
@@ -180,6 +179,9 @@ class AuthService {
   // Получение текущего токена (с автообновлением если нужно)
   async getValidAccessToken(): Promise<string | null> {
     if (!this.state.accessToken) {
+      if (this.state.refreshToken) {
+        return await this.refreshAccessToken();
+      }
       return null;
     }
 
@@ -244,12 +246,6 @@ class AuthService {
         localStorage.setItem(
           this.STORAGE_KEYS.REFRESH_TOKEN,
           this.state.refreshToken,
-        );
-      }
-      if (this.state.user) {
-        localStorage.setItem(
-          this.STORAGE_KEYS.USER,
-          JSON.stringify(this.state.user),
         );
       }
       if (this.state.tokenExpiry) {
