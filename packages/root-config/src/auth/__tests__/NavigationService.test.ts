@@ -1,12 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  vi,
-  type Mock,
-} from "vitest";
+import { type Mock } from "vitest";
 
 type MockAuthService = {
   isAuthenticated: () => boolean;
@@ -112,11 +104,11 @@ describe("NavigationService", () => {
     expect(
       (mockAuthService.logout as unknown as Mock).mock?.calls === undefined
         ? true
-        : true
+        : true,
     ).toBe(true);
     // The above line is a no-op compatibility check; assert call separately:
     expect((mockAuthService.logout as unknown as Mock).mock.calls.length).toBe(
-      1
+      1,
     );
 
     expect(window.location.pathname).toBe("/");

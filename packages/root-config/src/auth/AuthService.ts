@@ -20,6 +20,7 @@ class AuthService {
   };
 
   private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private refreshMutex: Promise<string | null> | null = null; // Ensure refresh runs once
 
   constructor() {
     this.initializationPromise = this.initializeAsync();
@@ -54,11 +55,11 @@ class AuthService {
     try {
       const accessToken = localStorage.getItem(this.STORAGE_KEYS.ACCESS_TOKEN);
       const refreshToken = localStorage.getItem(
-        this.STORAGE_KEYS.REFRESH_TOKEN
+        this.STORAGE_KEYS.REFRESH_TOKEN,
       );
       const userStr = localStorage.getItem(this.STORAGE_KEYS.USER);
       const tokenExpiryStr = localStorage.getItem(
-        this.STORAGE_KEYS.TOKEN_EXPIRY
+        this.STORAGE_KEYS.TOKEN_EXPIRY,
       );
 
       if (accessToken && userStr) {
@@ -137,31 +138,43 @@ class AuthService {
       return null;
     }
 
-    try {
-      // Здесь должен быть реальный API запрос для обновления токена
-      const response = await this.mockRefreshToken(this.state.refreshToken);
-
-      this.updateState({
-        ...this.state,
-        accessToken: response.accessToken,
-        tokenExpiry: response.tokenExpiry,
-      });
-
-      this.saveToStorage();
-      this.setupTokenRefresh();
-
-      this.dispatchEvent(AUTH_EVENTS.AUTH_TOKEN_REFRESHED, {
-        accessToken: response.accessToken,
-      });
-
-      return response.accessToken;
-    } catch (error) {
-      this.logout();
-      const errorMessage =
-        error instanceof Error ? error.message : "Token refresh failed";
-      this.dispatchEvent(AUTH_EVENTS.AUTH_ERROR, { error: errorMessage });
-      return null;
+    if (this.refreshMutex) {
+      return this.refreshMutex;
     }
+
+    const runRefresh = async (): Promise<string | null> => {
+      try {
+        // Здесь должен быть реальный API запрос для обновления токена
+        const response = await this.mockRefreshToken(this.state.refreshToken);
+
+        this.updateState({
+          ...this.state,
+          accessToken: response.accessToken,
+          tokenExpiry: response.tokenExpiry,
+        });
+
+        this.saveToStorage();
+        this.setupTokenRefresh();
+
+        this.dispatchEvent(AUTH_EVENTS.AUTH_TOKEN_REFRESHED, {
+          accessToken: response.accessToken,
+        });
+
+        return response.accessToken;
+      } catch (error) {
+        this.logout();
+        const errorMessage =
+          error instanceof Error ? error.message : "Token refresh failed";
+        this.dispatchEvent(AUTH_EVENTS.AUTH_ERROR, { error: errorMessage });
+        return null;
+      }
+    };
+
+    this.refreshMutex = runRefresh().finally(() => {
+      this.refreshMutex = null;
+    });
+
+    return this.refreshMutex;
   }
 
   // Получение текущего токена (с автообновлением если нужно)
@@ -202,13 +215,13 @@ class AuthService {
 
     window.addEventListener(
       AUTH_EVENTS.AUTH_STATE_CHANGED,
-      handleAuthChange as EventListener
+      handleAuthChange as EventListener,
     );
 
     return () => {
       window.removeEventListener(
         AUTH_EVENTS.AUTH_STATE_CHANGED,
-        handleAuthChange as EventListener
+        handleAuthChange as EventListener,
       );
     };
   }
@@ -224,25 +237,25 @@ class AuthService {
       if (this.state.accessToken) {
         localStorage.setItem(
           this.STORAGE_KEYS.ACCESS_TOKEN,
-          this.state.accessToken
+          this.state.accessToken,
         );
       }
       if (this.state.refreshToken) {
         localStorage.setItem(
           this.STORAGE_KEYS.REFRESH_TOKEN,
-          this.state.refreshToken
+          this.state.refreshToken,
         );
       }
       if (this.state.user) {
         localStorage.setItem(
           this.STORAGE_KEYS.USER,
-          JSON.stringify(this.state.user)
+          JSON.stringify(this.state.user),
         );
       }
       if (this.state.tokenExpiry) {
         localStorage.setItem(
           this.STORAGE_KEYS.TOKEN_EXPIRY,
-          this.state.tokenExpiry.toString()
+          this.state.tokenExpiry.toString(),
         );
       }
     } catch (error) {

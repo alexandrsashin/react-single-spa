@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { AuthState } from "../types";
 import { AUTH_EVENTS } from "../types";
 
@@ -288,7 +287,7 @@ describe("authService (unit tests)", () => {
         email: "test@test.com",
         name: "Test",
         roles: [],
-      })
+      }),
     );
     localStorage.setItem("auth_token_expiry", pastExpiry.toString());
 

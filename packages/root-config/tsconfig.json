@@ -18,6 +18,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "types": ["vitest/globals", "react", "react-dom", "jsdom"],
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],

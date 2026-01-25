@@ -1,4 +1,3 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { AUTH_EVENTS } from "../types";
 
 // Helper to create a fresh RedirectService import with a mocked AuthService
@@ -22,7 +21,7 @@ async function importWithMockedAuth(initialAuth = false) {
   (window as any).addEventListener = (
     type: string,
     cb: EventListener,
-    opts?: any
+    opts?: any,
   ) => {
     if (type === "popstate") {
       captured.popstate.push(cb);
@@ -165,7 +164,7 @@ describe("RedirectService", () => {
     // Should not add duplicate
     redirectService.addPublicRoute("/about");
     expect(
-      redirectService.getPublicRoutes().filter((r) => r === "/about").length
+      redirectService.getPublicRoutes().filter((r) => r === "/about").length,
     ).toBe(1);
   });
 
