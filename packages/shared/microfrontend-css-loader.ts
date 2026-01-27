@@ -58,9 +58,11 @@ function collectCssFiles(
  */
 export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
   const { appName, manifestPath } = options;
+  console.log(`[${appName}] CSS loader invoked (manifest: ${manifestPath})`);
 
   // Skip in development (Vite HMR handles CSS)
   if (!import.meta.env.PROD) {
+    console.log(`[${appName}] Development mode detected – skipping CSS preload`);
     return Promise.resolve();
   }
 
@@ -74,14 +76,17 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
   return fetch(manifestPath)
     .then((res) => res.json())
     .then((manifest: Record<string, ManifestEntry>) => {
+      console.log(`[${appName}] Manifest fetched, resolving entry chunks`);
       const entryKey = "src/main.ts";
       const entry = manifest[entryKey];
       if (!entry) {
+        console.warn(`[${appName}] Entry ${entryKey} not found in manifest`);
         return;
       }
 
       const cssFiles = collectCssFiles(manifest, entryKey);
       if (cssFiles.size === 0) {
+        console.log(`[${appName}] No CSS chunks discovered for entry ${entryKey}`);
         return;
       }
 
@@ -90,6 +95,7 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
         const fullPath = `${basePath}/${cssFile}`;
 
         if (appCssFiles.has(fullPath)) {
+          console.log(`[${appName}] CSS already tracked: ${cssFile}`);
           return Promise.resolve();
         }
 
@@ -98,12 +104,14 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
         ) as HTMLLinkElement | null;
 
         if (existingLink) {
+          console.log(`[${appName}] Reusing existing CSS link: ${cssFile}`);
           appCssFiles.add(fullPath);
 
           if (
             existingLink.dataset.cssStatus === "loaded" ||
             existingLink.sheet
           ) {
+            console.log(`[${appName}] Existing CSS already loaded: ${cssFile}`);
             return Promise.resolve();
           }
 
@@ -112,6 +120,7 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
               existingLink.dataset.cssStatus = "loaded";
               existingLink.removeEventListener("load", handleLoad);
               existingLink.removeEventListener("error", handleError);
+              console.log(`[${appName}] Existing CSS finished loading: ${cssFile}`);
               resolve();
             };
 
@@ -134,11 +143,13 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
           link.dataset.app = appName;
           link.dataset.cssFile = cssFile;
           appCssFiles.add(fullPath);
+          console.log(`[${appName}] Injecting CSS link: ${cssFile}`);
 
           const handleLoad = () => {
             link.dataset.cssStatus = "loaded";
             link.removeEventListener("load", handleLoad);
             link.removeEventListener("error", handleError);
+            console.log(`[${appName}] CSS loaded: ${cssFile}`);
             resolve();
           };
 
@@ -157,7 +168,9 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
         });
       });
 
-      return Promise.all(loadPromises).then(() => void 0);
+      return Promise.all(loadPromises).then(() => {
+        console.log(`[${appName}] CSS preload finished (${cssFiles.size} file(s))`);
+      });
     })
     .catch((err) => {
       console.warn(`[${appName}] Failed to load CSS from manifest:`, err);
@@ -170,16 +183,19 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
  */
 export function unloadMicrofrontendCSS(appName: string): void {
   const links = document.querySelectorAll(`link[data-app="${appName}"]`);
+  console.log(`[${appName}] Unloading ${links.length} CSS link(s)`);
 
   links.forEach((link) => {
     const href = link.getAttribute("href");
     if (href) {
       link.remove();
+      console.log(`[${appName}] CSS link removed: ${href}`);
     }
   });
 
   // Clear tracking
   loadedCssFiles.delete(appName);
+  console.log(`[${appName}] CSS tracking cleared`);
 }
 
 /**
