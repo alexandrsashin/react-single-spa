@@ -1,18 +1,53 @@
 /**
  * CSS Loader Utility for Single-SPA Microfrontends
  *
- * This utility handles dynamic CSS loading in production with:
- * - Duplicate prevention
- * - DOM state tracking
+ * Handles production CSS loading from Vite manifests with:
+ * - Duplicate prevention across microfrontends
+ * - Tracking of in-flight stylesheet loads
  * - Optional cleanup on unmount
  */
 
 const loadedCssFiles = new Map<string, Set<string>>();
+const loadingCssFiles = new Map<string, Map<string, Promise<void>>>();
+
+function ensureAppState(appName: string): void {
+  if (!loadedCssFiles.has(appName)) {
+    loadedCssFiles.set(appName, new Set());
+  }
+
+  if (!loadingCssFiles.has(appName)) {
+    loadingCssFiles.set(appName, new Map());
+  }
+}
+
+function isStylesheetLoaded(link: HTMLLinkElement): boolean {
+  if (link.dataset.cssStatus === "loaded") {
+    return true;
+  }
+
+  try {
+    const sheet = link.sheet as CSSStyleSheet | null;
+    if (!sheet) {
+      return false;
+    }
+
+    // Accessing cssRules is enough to know same-origin sheets are ready;
+    // cross-origin sheets throw SecurityError which we treat as loaded.
+    void sheet.cssRules;
+    return true;
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "SecurityError") {
+      return true;
+    }
+
+    return false;
+  }
+}
 
 export interface CSSLoaderOptions {
   appName: string;
   manifestPath: string;
-  cleanupOnUnmount?: boolean; // Default: false
+  cleanupOnUnmount?: boolean;
 }
 
 interface ManifestEntry {
@@ -53,30 +88,27 @@ function collectCssFiles(
   return cssFiles;
 }
 
-/**
- * Load CSS files for a microfrontend from its Vite manifest
- */
 export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
   const { appName, manifestPath } = options;
   console.log(`[${appName}] CSS loader invoked (manifest: ${manifestPath})`);
 
-  // Skip in development (Vite HMR handles CSS)
   if (!import.meta.env.PROD) {
-    console.log(`[${appName}] Development mode detected – skipping CSS preload`);
+    console.log(
+      `[${appName}] Development mode detected – skipping CSS preload`,
+    );
     return Promise.resolve();
   }
 
-  // Initialize tracking for this app
-  if (!loadedCssFiles.has(appName)) {
-    loadedCssFiles.set(appName, new Set());
-  }
+  ensureAppState(appName);
 
   const appCssFiles = loadedCssFiles.get(appName)!;
+  const appLoadingPromises = loadingCssFiles.get(appName)!;
 
   return fetch(manifestPath)
     .then((res) => res.json())
     .then((manifest: Record<string, ManifestEntry>) => {
       console.log(`[${appName}] Manifest fetched, resolving entry chunks`);
+
       const entryKey = "src/main.ts";
       const entry = manifest[entryKey];
       if (!entry) {
@@ -86,7 +118,9 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
 
       const cssFiles = collectCssFiles(manifest, entryKey);
       if (cssFiles.size === 0) {
-        console.log(`[${appName}] No CSS chunks discovered for entry ${entryKey}`);
+        console.log(
+          `[${appName}] No CSS chunks discovered for entry ${entryKey}`,
+        );
         return;
       }
 
@@ -99,28 +133,40 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
           return Promise.resolve();
         }
 
+        const inflight = appLoadingPromises.get(fullPath);
+        if (inflight) {
+          console.log(
+            `[${appName}] CSS load in progress (waiting): ${cssFile}`,
+          );
+          return inflight;
+        }
+
         const existingLink = document.querySelector(
           `link[href="${fullPath}"]`,
         ) as HTMLLinkElement | null;
 
         if (existingLink) {
           console.log(`[${appName}] Reusing existing CSS link: ${cssFile}`);
-          appCssFiles.add(fullPath);
 
-          if (
-            existingLink.dataset.cssStatus === "loaded" ||
-            existingLink.sheet
-          ) {
+          if (isStylesheetLoaded(existingLink)) {
+            existingLink.dataset.cssStatus = "loaded";
+            appCssFiles.add(fullPath);
             console.log(`[${appName}] Existing CSS already loaded: ${cssFile}`);
             return Promise.resolve();
           }
 
-          return new Promise<void>((resolve) => {
+          existingLink.dataset.cssStatus = "loading";
+
+          const promise = new Promise<void>((resolve) => {
             const handleLoad = () => {
               existingLink.dataset.cssStatus = "loaded";
               existingLink.removeEventListener("load", handleLoad);
               existingLink.removeEventListener("error", handleError);
-              console.log(`[${appName}] Existing CSS finished loading: ${cssFile}`);
+              console.log(
+                `[${appName}] Existing CSS finished loading: ${cssFile}`,
+              );
+              appCssFiles.add(fullPath);
+              appLoadingPromises.delete(fullPath);
               resolve();
             };
 
@@ -128,27 +174,33 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
               existingLink.removeEventListener("load", handleLoad);
               existingLink.removeEventListener("error", handleError);
               console.warn(`[${appName}] CSS link failed to load: ${cssFile}`);
+              appLoadingPromises.delete(fullPath);
               resolve();
             };
 
             existingLink.addEventListener("load", handleLoad, { once: true });
             existingLink.addEventListener("error", handleError, { once: true });
           });
+
+          appLoadingPromises.set(fullPath, promise);
+          return promise;
         }
 
-        return new Promise<void>((resolve) => {
+        const promise = new Promise<void>((resolve) => {
           const link = document.createElement("link");
           link.rel = "stylesheet";
           link.href = fullPath;
           link.dataset.app = appName;
           link.dataset.cssFile = cssFile;
-          appCssFiles.add(fullPath);
+          link.dataset.cssStatus = "loading";
           console.log(`[${appName}] Injecting CSS link: ${cssFile}`);
 
           const handleLoad = () => {
             link.dataset.cssStatus = "loaded";
             link.removeEventListener("load", handleLoad);
             link.removeEventListener("error", handleError);
+            appCssFiles.add(fullPath);
+            appLoadingPromises.delete(fullPath);
             console.log(`[${appName}] CSS loaded: ${cssFile}`);
             resolve();
           };
@@ -156,9 +208,10 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
           const handleError = () => {
             link.removeEventListener("load", handleLoad);
             link.removeEventListener("error", handleError);
-            appCssFiles.delete(fullPath);
             link.remove();
             console.warn(`[${appName}] CSS failed to load: ${cssFile}`);
+            appCssFiles.delete(fullPath);
+            appLoadingPromises.delete(fullPath);
             resolve();
           };
 
@@ -166,10 +219,15 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
           link.addEventListener("error", handleError, { once: true });
           document.head.appendChild(link);
         });
+
+        appLoadingPromises.set(fullPath, promise);
+        return promise;
       });
 
       return Promise.all(loadPromises).then(() => {
-        console.log(`[${appName}] CSS preload finished (${cssFiles.size} file(s))`);
+        console.log(
+          `[${appName}] CSS preload finished (${cssFiles.size} file(s))`,
+        );
       });
     })
     .catch((err) => {
@@ -177,10 +235,6 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
     });
 }
 
-/**
- * Remove CSS files loaded by a specific microfrontend
- * Only call this if you need to clean up styles on unmount
- */
 export function unloadMicrofrontendCSS(appName: string): void {
   const links = document.querySelectorAll(`link[data-app="${appName}"]`);
   console.log(`[${appName}] Unloading ${links.length} CSS link(s)`);
@@ -193,27 +247,22 @@ export function unloadMicrofrontendCSS(appName: string): void {
     }
   });
 
-  // Clear tracking
   loadedCssFiles.delete(appName);
+  loadingCssFiles.delete(appName);
   console.log(`[${appName}] CSS tracking cleared`);
 }
 
-/**
- * Wrap Single-SPA lifecycle with CSS loading
- */
 export function wrapLifecyclesWithCSS(
   lifecycles: any,
   options: CSSLoaderOptions,
 ) {
   const { appName, cleanupOnUnmount = false } = options;
 
-  // Wrap bootstrap to load CSS before app starts
   const originalBootstrap = lifecycles.bootstrap;
   const bootstrap = (props: any) => {
     return loadMicrofrontendCSS(options).then(() => originalBootstrap(props));
   };
 
-  // Optionally wrap unmount to clean up CSS
   const originalUnmount = lifecycles.unmount;
   const unmount = cleanupOnUnmount
     ? (props: any) => {
