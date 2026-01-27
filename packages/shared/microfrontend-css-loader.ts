@@ -86,36 +86,78 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
       }
 
       const basePath = manifestPath.replace("/.vite/manifest.json", "");
-      cssFiles.forEach((cssFile) => {
+      const loadPromises = Array.from(cssFiles).map((cssFile) => {
         const fullPath = `${basePath}/${cssFile}`;
 
-        // Skip if already loaded by this app
         if (appCssFiles.has(fullPath)) {
-          console.log(`[${appName}] CSS already loaded: ${cssFile}`);
-          return;
+          return Promise.resolve();
         }
 
-        // Check if another app already loaded the same file
-        const existingLink = document.querySelector(`link[href="${fullPath}"]`);
+        const existingLink = document.querySelector(
+          `link[href="${fullPath}"]`,
+        ) as HTMLLinkElement | null;
+
         if (existingLink) {
           appCssFiles.add(fullPath);
-          console.log(
-            `[${appName}] CSS link already exists in DOM: ${cssFile}`,
-          );
-          return;
+
+          if (
+            existingLink.dataset.cssStatus === "loaded" ||
+            existingLink.sheet
+          ) {
+            return Promise.resolve();
+          }
+
+          return new Promise<void>((resolve) => {
+            const handleLoad = () => {
+              existingLink.dataset.cssStatus = "loaded";
+              existingLink.removeEventListener("load", handleLoad);
+              existingLink.removeEventListener("error", handleError);
+              resolve();
+            };
+
+            const handleError = () => {
+              existingLink.removeEventListener("load", handleLoad);
+              existingLink.removeEventListener("error", handleError);
+              console.warn(`[${appName}] CSS link failed to load: ${cssFile}`);
+              resolve();
+            };
+
+            existingLink.addEventListener("load", handleLoad, { once: true });
+            existingLink.addEventListener("error", handleError, { once: true });
+          });
         }
 
-        // Create and append new link element
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = fullPath;
-        link.dataset.app = appName;
-        link.dataset.cssFile = cssFile;
-        document.head.appendChild(link);
+        return new Promise<void>((resolve) => {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = fullPath;
+          link.dataset.app = appName;
+          link.dataset.cssFile = cssFile;
+          appCssFiles.add(fullPath);
 
-        appCssFiles.add(fullPath);
-        console.log(`[${appName}] CSS loaded: ${cssFile}`);
+          const handleLoad = () => {
+            link.dataset.cssStatus = "loaded";
+            link.removeEventListener("load", handleLoad);
+            link.removeEventListener("error", handleError);
+            resolve();
+          };
+
+          const handleError = () => {
+            link.removeEventListener("load", handleLoad);
+            link.removeEventListener("error", handleError);
+            appCssFiles.delete(fullPath);
+            link.remove();
+            console.warn(`[${appName}] CSS failed to load: ${cssFile}`);
+            resolve();
+          };
+
+          link.addEventListener("load", handleLoad, { once: true });
+          link.addEventListener("error", handleError, { once: true });
+          document.head.appendChild(link);
+        });
       });
+
+      return Promise.all(loadPromises).then(() => void 0);
     })
     .catch((err) => {
       console.warn(`[${appName}] Failed to load CSS from manifest:`, err);
@@ -133,7 +175,6 @@ export function unloadMicrofrontendCSS(appName: string): void {
     const href = link.getAttribute("href");
     if (href) {
       link.remove();
-      console.log(`[${appName}] CSS unloaded: ${href}`);
     }
   });
 
