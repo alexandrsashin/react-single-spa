@@ -19,6 +19,7 @@ class AuthService {
   };
 
   private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private tokenExpiryTimer: ReturnType<typeof setTimeout> | null = null;
   private refreshMutex: Promise<string | null> | null = null; // Ensure refresh runs once
 
   constructor() {
@@ -29,7 +30,7 @@ class AuthService {
   private async initializeAsync(): Promise<void> {
     try {
       await this.initializeFromStorage();
-      this.setupTokenRefresh();
+      this.setupTokenExpiryTimer();
     } finally {
       this.isInitializing = false;
       // Уведомляем об окончании инициализации
@@ -101,7 +102,7 @@ class AuthService {
       });
 
       this.saveToStorage();
-      this.setupTokenRefresh();
+      this.setupTokenExpiryTimer();
 
       this.dispatchEvent(AUTH_EVENTS.AUTH_LOGIN_SUCCESS, {
         user: response.user,
@@ -117,6 +118,7 @@ class AuthService {
   // Выход из системы
   logout(): void {
     this.clearTokenRefreshTimer();
+    this.clearTokenExpiryTimer();
     this.clearStorage();
     this.updateState({
       isAuthenticated: false,
@@ -153,7 +155,7 @@ class AuthService {
         });
 
         this.saveToStorage();
-        this.setupTokenRefresh();
+        this.setupTokenExpiryTimer();
 
         this.dispatchEvent(AUTH_EVENTS.AUTH_TOKEN_REFRESHED, {
           accessToken: response.accessToken,
@@ -270,18 +272,23 @@ class AuthService {
     window.dispatchEvent(event);
   }
 
-  private setupTokenRefresh(): void {
+  private setupTokenExpiryTimer(): void {
     this.clearTokenRefreshTimer();
+    this.clearTokenExpiryTimer();
 
     if (this.state.tokenExpiry) {
-      // Обновляем токен за 5 минут до истечения
-      const refreshTime = this.state.tokenExpiry - Date.now() - 5 * 60 * 1000;
+      const timeUntilExpiry = this.state.tokenExpiry - Date.now();
 
-      if (refreshTime > 0) {
-        this.tokenRefreshTimer = setTimeout(() => {
-          this.refreshAccessToken();
-        }, refreshTime);
+      if (timeUntilExpiry <= 0) {
+        // Токен уже истек
+        this.logout();
+        return;
       }
+
+      // Устанавливаем таймер на момент истечения токена
+      this.tokenExpiryTimer = setTimeout(() => {
+        this.logout();
+      }, timeUntilExpiry);
     }
   }
 
@@ -289,6 +296,13 @@ class AuthService {
     if (this.tokenRefreshTimer) {
       clearTimeout(this.tokenRefreshTimer);
       this.tokenRefreshTimer = null;
+    }
+  }
+
+  private clearTokenExpiryTimer(): void {
+    if (this.tokenExpiryTimer) {
+      clearTimeout(this.tokenExpiryTimer);
+      this.tokenExpiryTimer = null;
     }
   }
 
