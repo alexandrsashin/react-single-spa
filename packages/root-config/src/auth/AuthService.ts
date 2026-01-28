@@ -21,6 +21,7 @@ class AuthService {
   private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
   private tokenExpiryTimer: ReturnType<typeof setTimeout> | null = null;
   private refreshMutex: Promise<string | null> | null = null; // Ensure refresh runs once
+  private lastRefreshTime: number = 0; // Timestamp последнего успешного refresh
 
   constructor() {
     this.initializationPromise = this.initializeAsync();
@@ -154,6 +155,7 @@ class AuthService {
           tokenExpiry: response.tokenExpiry,
         });
 
+        this.lastRefreshTime = Date.now();
         this.saveToStorage();
         this.setupTokenExpiryTimer();
 
@@ -189,7 +191,18 @@ class AuthService {
 
     // Проверяем, не истекает ли токен в ближайшие 5 минут
     const fiveMinutesFromNow = Date.now() + 5 * 60 * 1000;
-    if (this.state.tokenExpiry && this.state.tokenExpiry < fiveMinutesFromNow) {
+    const shouldRefresh =
+      this.state.tokenExpiry && this.state.tokenExpiry < fiveMinutesFromNow;
+
+    if (shouldRefresh) {
+      // Grace period: не обновляем токен, если последний refresh был менее 30 секунд назад
+      const gracePeriod = 30 * 1000; // 30 секунд
+      const timeSinceLastRefresh = Date.now() - this.lastRefreshTime;
+
+      if (timeSinceLastRefresh < gracePeriod) {
+        return this.state.accessToken;
+      }
+
       return await this.refreshAccessToken();
     }
 
