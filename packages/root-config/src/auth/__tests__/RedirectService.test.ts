@@ -94,10 +94,6 @@ describe("RedirectService", () => {
 
     // after initialization, RedirectService should have redirected to /user
     expect(window.location.pathname).toBe("/user");
-
-    // sanity: navigateTo still works
-    redirectService.navigateTo("/login");
-    expect(window.location.pathname).toBe("/login");
   });
 
   it("redirects to /login when authState becomes unauthenticated", async () => {
@@ -117,68 +113,6 @@ describe("RedirectService", () => {
 
     // RedirectService handles navigation synchronously via pushState override
     expect(window.location.pathname).toBe("/login");
-  });
-
-  it("shouldRedirect returns correct redirect path for various scenarios", async () => {
-    // Test authenticated user scenarios
-    let result = await importWithMockedAuth(true);
-
-    expect(result.redirectService.shouldRedirect("/")).toBe("/user");
-    expect(result.redirectService.shouldRedirect("")).toBe("/user");
-    expect(result.redirectService.shouldRedirect("/login")).toBe("/user");
-    expect(result.redirectService.shouldRedirect("/user")).toBeNull();
-    expect(result.redirectService.shouldRedirect("/admin")).toBeNull();
-
-    // Test unauthenticated user scenarios
-    result = await importWithMockedAuth(false);
-
-    expect(result.redirectService.shouldRedirect("/")).toBe("/login");
-    expect(result.redirectService.shouldRedirect("")).toBe("/login");
-    expect(result.redirectService.shouldRedirect("/user")).toBe("/login");
-    expect(result.redirectService.shouldRedirect("/admin")).toBe("/login");
-    expect(result.redirectService.shouldRedirect("/login")).toBeNull();
-  });
-
-  it("navigateTo method programmatically navigates to path", async () => {
-    const { redirectService } = await importWithMockedAuth(true);
-
-    redirectService.navigateTo("/admin");
-    expect(window.location.pathname).toBe("/admin");
-
-    redirectService.navigateTo("/user");
-    expect(window.location.pathname).toBe("/user");
-  });
-
-  it("addPublicRoute adds new public route to the list", async () => {
-    const { redirectService } = await importWithMockedAuth(false);
-
-    const initialRoutes = redirectService.getPublicRoutes();
-    expect(initialRoutes).toContain("/login");
-    expect(initialRoutes).not.toContain("/about");
-
-    redirectService.addPublicRoute("/about");
-
-    const updatedRoutes = redirectService.getPublicRoutes();
-    expect(updatedRoutes).toContain("/about");
-
-    // Should not add duplicate
-    redirectService.addPublicRoute("/about");
-    expect(
-      redirectService.getPublicRoutes().filter((r) => r === "/about").length,
-    ).toBe(1);
-  });
-
-  it("getPublicRoutes returns copy of public routes array", async () => {
-    const { redirectService } = await importWithMockedAuth(false);
-
-    const routes1 = redirectService.getPublicRoutes();
-    const routes2 = redirectService.getPublicRoutes();
-
-    // Should be different array instances
-    expect(routes1).not.toBe(routes2);
-
-    // But with same content
-    expect(routes1).toEqual(routes2);
   });
 
   // Additional tests for AUTH_LOGIN_SUCCESS handling and navigateTo were

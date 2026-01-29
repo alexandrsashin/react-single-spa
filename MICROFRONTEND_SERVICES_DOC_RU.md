@@ -65,19 +65,20 @@ export const { bootstrap, mount, unmount } = wrapLifecyclesWithCSS(lifecycles, {
 
 1. **Конструктор** сразу запускает `initializeAsync`:
    - Читает токены из `localStorage`.
-   - При наличии refresh token пытается обновить access token (`refreshAccessToken`).
-   - Инициализирует таймер автообновления (за 5 минут до истечения).
+   - При наличии refresh token автоматически обновляет access token.
+   - Устанавливает таймер для logout при истечении токена.
    - Диспатчит `AUTH_INITIALIZED` с текущим статусом.
 2. **Доступ к готовности**: метод `waitForInitialization()` позволяет дождаться завершения стартовой инициализации.
 
-## Основные методы
+## Публичные методы
 
 - `login(credentials)` — выполняет mock-логин (заменить на реальный API), сохраняет токены, обновляет state и рассылает `AUTH_LOGIN_SUCCESS`.
 - `logout()` — очищает таймеры, storage, state и шлёт `AUTH_LOGOUT`.
-- `refreshAccessToken()` — контролирует единственный параллельный refresh (mutex), обновляет state, запускает таймер и диспатчит `AUTH_TOKEN_REFRESHED`.
-- `getAccessToken()` — возвращает актуальный access token, при необходимости инициирует refresh.
+- `getAccessToken()` — возвращает актуальный access token, при необходимости автоматически обновляет его (если токен истекает в течение 5 минут).
 - `getState()`, `isAuthenticated()`, `getCurrentUser()` — геттеры состояния.
 - `subscribe(callback)` — подписка на `AUTH_STATE_CHANGED`; возвращает disposer.
+- `waitForInitialization()` — возвращает промис, который разрешается после завершения инициализации.
+- `isInitializationComplete()` — проверяет, завершена ли инициализация.
 
 ## Хранение и события
 
@@ -87,9 +88,10 @@ export const { bootstrap, mount, unmount } = wrapLifecyclesWithCSS(lifecycles, {
 
 ## Тайминги и автообновление
 
-- `setupTokenRefresh()` создаёт `setTimeout` на момент `tokenExpiry - 5 минут`.
-- Повторная установка таймера происходит при каждом логине или обновлении токена.
-- `refreshMutex` гарантирует, что одновременные вызовы `refreshAccessToken` используют один запрос.
+- Токен обновляется реактивно при вызове `getAccessToken()`, если токен истекает в течение 5 минут.
+- Grace period в 30 секунд предотвращает избыточные обновления токена.
+- `setupTokenExpiryTimer()` устанавливает таймер для автоматического logout при истечении токена.
+- `refreshMutex` гарантирует, что одновременные запросы на обновление токена используют один запрос.
 
 ## Mock API
 
@@ -139,21 +141,11 @@ const token = await authService.getAccessToken();
 - Подписка через `authService.subscribe` позволяет реагировать на логаут и возвращать пользователя на `/login`.
 - Слушает `AUTH_LOGIN_SUCCESS` для перенаправления после входа.
 
-## Публичные методы
+## Примечания
 
-- `navigateTo(path)` — программный редирект (wrap `redirectTo`).
-- `shouldRedirect(targetPath)` — возвращает целевой путь, если требуется редирект, иначе `null`. Удобно для unit-тестов или внешних проверок.
-- `addPublicRoute(route)` — добавляет маршрут в список публичных.
-- `getPublicRoutes()` — возвращает копию списка публичных маршрутов.
-
-## Пример интеграции
-
-```ts
-import { redirectService } from "@react-single-spa/root-config";
-
-redirectService.addPublicRoute("/help");
-
-redirectService.navigateTo("/user");
-```
+- RedirectService работает автоматически и не требует прямого вызова методов из приложений.
+- Для программной навигации используйте NavigationService.
+- Список публичных маршрутов определяется в конструкторе сервиса и включает `/login`.
+- Для изменения логики маршрутизации необходимо модифицировать сам RedirectService.
 
 Документ обновляется по мере изменения сервисов; при расширении функциональности рекомендуется описывать новые события и опции.

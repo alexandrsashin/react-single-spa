@@ -133,7 +133,7 @@ class AuthService {
   }
 
   // Обновление токена
-  async refreshAccessToken(): Promise<string | null> {
+  private async refreshAccessToken(): Promise<string | null> {
     if (!this.state.refreshToken) {
       this.logout();
       return null;

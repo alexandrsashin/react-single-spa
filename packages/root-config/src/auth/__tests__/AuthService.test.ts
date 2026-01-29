@@ -358,58 +358,6 @@ describe("authService (unit tests)", () => {
     expect(authService.getState().isAuthenticated).toBe(true);
   });
 
-  it("setupTokenRefresh schedules auto-refresh before expiry", async () => {
-    const authService = await importFreshAuthService();
-
-    const loginPromise = authService.login({
-      email: "test@example.com",
-      password: "password",
-    });
-    await vi.advanceTimersByTimeAsync(1000);
-    await loginPromise;
-
-    const refreshSpy = vi.fn();
-    window.addEventListener(AUTH_EVENTS.AUTH_TOKEN_REFRESHED, (e: Event) => {
-      refreshSpy((e as CustomEvent).detail);
-    });
-
-    // Token expires in 1 hour, should refresh 5 min before (55 min from now)
-    // Advance time to just before refresh point
-    await vi.advanceTimersByTimeAsync(54 * 60 * 1000); // 54 minutes
-    expect(refreshSpy).not.toHaveBeenCalled();
-
-    // Now advance to trigger refresh
-    await vi.advanceTimersByTimeAsync(2 * 60 * 1000); // +2 min = 56 total
-
-    // Wait for mock refresh (500ms)
-    await vi.advanceTimersByTimeAsync(500);
-
-    expect(refreshSpy).toHaveBeenCalled();
-  });
-
-  it("refreshAccessToken returns null and logs out if no refresh token", async () => {
-    const authService = await importFreshAuthService();
-
-    // Login first
-    const loginPromise = authService.login({
-      email: "test@example.com",
-      password: "password",
-    });
-    await vi.advanceTimersByTimeAsync(1000);
-    await loginPromise;
-
-    // Manually clear refresh token
-    localStorage.removeItem("auth_refresh_token");
-
-    // Force state update to remove refresh token
-    authService.logout();
-
-    // Try to refresh - should return null
-    const result = await authService.refreshAccessToken();
-    expect(result).toBeNull();
-    expect(authService.isAuthenticated()).toBe(false);
-  });
-
   it("getAccessToken returns null if not authenticated", async () => {
     const authService = await importFreshAuthService();
 

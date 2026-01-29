@@ -18,7 +18,7 @@ class RedirectService {
     // Инициализируем редиректы после загрузки DOM
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () =>
-        this.setupRedirects()
+        this.setupRedirects(),
       );
     } else {
       this.setupRedirects();
@@ -91,7 +91,7 @@ class RedirectService {
 
     // Проверяем, является ли текущий путь публичным
     const isPublicRoute = this.publicRoutes.some((route) =>
-      currentPath.startsWith(route)
+      currentPath.startsWith(route),
     );
 
     // Если пользователь не авторизован и пытается попасть на защищённый маршрут (не публичный)
@@ -157,13 +157,8 @@ class RedirectService {
     };
   }
 
-  // Публичный метод для программного редиректа
-  public navigateTo(path: string): void {
-    this.redirectTo(path);
-  }
-
   // Метод для проверки, нужен ли редирект
-  public shouldRedirect(targetPath: string): string | null {
+  private shouldRedirect(targetPath: string): string | null {
     const isAuthenticated = authService.isAuthenticated();
 
     if (targetPath === "/" || targetPath === "") {
@@ -171,7 +166,7 @@ class RedirectService {
     }
 
     const isPublicRoute = this.publicRoutes.some((route) =>
-      targetPath.startsWith(route)
+      targetPath.startsWith(route),
     );
 
     if (!isAuthenticated && !isPublicRoute) {
@@ -183,18 +178,6 @@ class RedirectService {
     }
 
     return null;
-  }
-
-  // Публичный метод для добавления публичного маршрута
-  public addPublicRoute(route: string): void {
-    if (!this.publicRoutes.includes(route)) {
-      this.publicRoutes.push(route);
-    }
-  }
-
-  // Публичный метод для получения списка публичных маршрутов
-  public getPublicRoutes(): string[] {
-    return [...this.publicRoutes];
   }
 }
 
