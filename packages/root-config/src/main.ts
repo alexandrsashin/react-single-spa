@@ -72,37 +72,6 @@ applications.forEach((app) => {
   // Скрываем лоадер после завершения инициализации
   hideLoader();
 
-  // Проверяем, нужен ли редирект после инициализации
-  const isAuthenticated = authService.isAuthenticated();
-  const currentPath = window.location.pathname;
-  const publicRoutes = ["/login"];
-  const isPublicRoute = publicRoutes.some((route) =>
-    currentPath.startsWith(route)
-  );
-
-  if (currentPath === "/" || currentPath === "") {
-    if (isAuthenticated) {
-      window.history.replaceState(null, "", "/user");
-    } else {
-      window.history.replaceState(null, "", "/login");
-    }
-  } else if (!isAuthenticated && !isPublicRoute) {
-    // Если неавторизован и пытается попасть на защищённый маршрут (не публичный)
-    // Сохраняем текущий путь в query-параметре redirectTo
-    const loginUrl = `/login?redirectTo=${encodeURIComponent(currentPath)}`;
-    window.history.replaceState(null, "", loginUrl);
-  } else if (isAuthenticated && currentPath.startsWith("/login")) {
-    // Если авторизован и на странице логина, проверяем redirectTo
-    const urlParams = new URLSearchParams(window.location.search);
-    const redirectTo = urlParams.get("redirectTo");
-
-    if (redirectTo && redirectTo !== "/login") {
-      window.history.replaceState(null, "", redirectTo);
-    } else {
-      window.history.replaceState(null, "", "/user");
-    }
-  }
-
   layoutEngine.activate();
   start();
 })();
@@ -142,7 +111,7 @@ function showNotFoundIfNeeded() {
   // Список известных маршрутов (не показываем 404)
   const knownRoutes = ["/login", "/user", "/roles", "/admin", "/"];
   const isKnownRoute = knownRoutes.some(
-    (route) => path === route || path.startsWith(route + "/")
+    (route) => path === route || path.startsWith(route + "/"),
   );
 
   if (!isKnownRoute) {
