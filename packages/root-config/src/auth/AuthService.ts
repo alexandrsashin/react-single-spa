@@ -16,6 +16,7 @@ class AuthService {
     ACCESS_TOKEN: "auth_access_token",
     REFRESH_TOKEN: "auth_refresh_token",
     TOKEN_EXPIRY: "auth_token_expiry",
+    LAST_REFRESH_TIME: "auth_last_refresh_time",
   };
 
   private tokenRefreshTimer: ReturnType<typeof setTimeout> | null = null;
@@ -61,6 +62,14 @@ class AuthService {
       const tokenExpiryStr = localStorage.getItem(
         this.STORAGE_KEYS.TOKEN_EXPIRY,
       );
+      const lastRefreshTimeStr = localStorage.getItem(
+        this.STORAGE_KEYS.LAST_REFRESH_TIME,
+      );
+
+      // Восстанавливаем lastRefreshTime из localStorage
+      if (lastRefreshTimeStr) {
+        this.lastRefreshTime = parseInt(lastRefreshTimeStr, 10);
+      }
 
       if (!refreshToken) {
         if (accessToken || tokenExpiryStr) {
@@ -157,6 +166,7 @@ class AuthService {
 
         this.lastRefreshTime = Date.now();
         this.saveToStorage();
+        this.saveLastRefreshTime();
         this.setupTokenExpiryTimer();
 
         this.dispatchEvent(AUTH_EVENTS.AUTH_TOKEN_REFRESHED, {
@@ -278,6 +288,18 @@ class AuthService {
     Object.values(this.STORAGE_KEYS).forEach((key) => {
       localStorage.removeItem(key);
     });
+    this.lastRefreshTime = 0;
+  }
+
+  private saveLastRefreshTime(): void {
+    try {
+      localStorage.setItem(
+        this.STORAGE_KEYS.LAST_REFRESH_TIME,
+        this.lastRefreshTime.toString(),
+      );
+    } catch (error) {
+      console.error("Error saving last refresh time to storage:", error);
+    }
   }
 
   private dispatchEvent(eventType: string, detail: unknown): void {
