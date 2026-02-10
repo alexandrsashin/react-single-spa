@@ -187,35 +187,49 @@ export function loadMicrofrontendCSS(options: CSSLoaderOptions): Promise<void> {
         }
 
         const promise = new Promise<void>((resolve) => {
+          // Use preload to start fetching stylesheet early without blocking render,
+          // then switch to rel="stylesheet" on load so styles are applied as soon
+          // as the resource is available. This reduces FOUC while allowing
+          // bootstrap to start quickly.
           const link = document.createElement("link");
-          link.rel = "stylesheet";
+          link.rel = "preload";
+          // @ts-ignore - `as` is a valid attribute on link
+          link.as = "style" as any;
           link.href = fullPath;
           link.dataset.app = appName;
           link.dataset.cssFile = cssFile;
           link.dataset.cssStatus = "loading";
-          console.log(`[${appName}] Injecting CSS link: ${cssFile}`);
+          console.log(`[${appName}] Preloading CSS link: ${cssFile}`);
 
-          const handleLoad = () => {
+          const handleApply = () => {
+            // When preload completes, turn link into a stylesheet so it applies.
+            try {
+              link.rel = "stylesheet";
+            } catch (e) {
+              // ignore write errors in exotic environments
+            }
+
             link.dataset.cssStatus = "loaded";
-            link.removeEventListener("load", handleLoad);
+            link.removeEventListener("load", handleApply);
             link.removeEventListener("error", handleError);
             appCssFiles.add(fullPath);
             appLoadingPromises.delete(fullPath);
-            console.log(`[${appName}] CSS loaded: ${cssFile}`);
+            console.log(`[${appName}] CSS applied: ${cssFile}`);
             resolve();
           };
 
           const handleError = () => {
-            link.removeEventListener("load", handleLoad);
+            link.removeEventListener("load", handleApply);
             link.removeEventListener("error", handleError);
+            // If preload fails, ensure we don't leave a broken preload link.
             link.remove();
-            console.warn(`[${appName}] CSS failed to load: ${cssFile}`);
+            console.warn(`[${appName}] CSS preload failed: ${cssFile}`);
             appCssFiles.delete(fullPath);
             appLoadingPromises.delete(fullPath);
             resolve();
           };
 
-          link.addEventListener("load", handleLoad, { once: true });
+          link.addEventListener("load", handleApply, { once: true });
           link.addEventListener("error", handleError, { once: true });
           document.head.appendChild(link);
         });
@@ -260,7 +274,18 @@ export function wrapLifecyclesWithCSS(
 
   const originalBootstrap = lifecycles.bootstrap;
   const bootstrap = (props: any) => {
-    return loadMicrofrontendCSS(options).then(() => originalBootstrap(props));
+    // Start preloading CSS promptly but don't block bootstrap to keep
+    // application startup snappy. The actual mount will wait for CSS to
+    // apply which prevents FOUC.
+    loadMicrofrontendCSS(options).catch(() => {});
+    return originalBootstrap(props);
+  };
+
+  const originalMount = lifecycles.mount;
+  const mount = (props: any) => {
+    // Ensure styles are applied before mount to avoid FOUC. If CSS is
+    // already loaded this will resolve immediately.
+    return loadMicrofrontendCSS(options).then(() => originalMount(props));
   };
 
   const originalUnmount = lifecycles.unmount;
@@ -274,7 +299,7 @@ export function wrapLifecyclesWithCSS(
 
   return {
     bootstrap,
-    mount: lifecycles.mount,
+    mount,
     unmount,
   };
 }
